@@ -97,6 +97,7 @@
 
         <module>org.eclipse.kura.linux.sysv.provider</module>
         <module>org.eclipse.kura.linux.systemd.provider</module>
+        <module>org.eclipse.kura.linux.snapctl.provider</module>
 
         <module>org.eclipse.kura.linux.debian.provider</module>
         <module>org.eclipse.kura.linux.redhat.provider</module>

@@ -287,6 +287,11 @@
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
+                                    <artifactId>org.eclipse.kura.linux.snapctl.provider</artifactId>
+                                    <version>${org.eclipse.kura.linux.snapctl.provider.version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.linux.redhat.provider</artifactId>
                                     <version>${org.eclipse.kura.linux.redhat.provider.version}</version>
                                 </artifactItem>
@@ -614,6 +619,8 @@
                                     tofile="target/plugins/org.eclipse.kura.linux.systemd.provider_${org.eclipse.kura.linux.systemd.provider.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.linux.debian.provider.jar"
                                     tofile="target/plugins/org.eclipse.kura.linux.debian.provider_${org.eclipse.kura.linux.debian.provider.version}.jar" />
+                                <move file="target/plugins/org.eclipse.kura.linux.snapctl.provider.jar"
+                                    tofile="target/plugins/org.eclipse.kura.linux.snapctl.provider_${org.eclipse.kura.linux.snapctl.provider.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.linux.redhat.provider.jar"
                                     tofile="target/plugins/org.eclipse.kura.linux.redhat.provider_${org.eclipse.kura.linux.redhat.provider.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.linux.position.jar"

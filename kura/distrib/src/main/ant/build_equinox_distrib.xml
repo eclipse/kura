@@ -191,6 +191,15 @@
 			</and>
 		</condition>
 
+		<condition property="is.snapctl">
+			<and>
+				<contains string="${service.manager}" substring="snapctl"/>
+				<not>
+					<contains string="${build.name}" substring="-nn"/>
+				</not>
+			</and>
+		</condition>
+
 		<condition property="is.debian">
 			<and>
 				<contains string="${os.base}" substring="debian"/>
@@ -212,6 +221,7 @@
 		<antcall target="linux-debian-config" />
 		<antcall target="linux-redhat-config" />
 		<antcall target="linux-systemd-config" />
+		<antcall target="linux-snapctl-config" />
 
 
 		<!-- Add mToolkit to config.ini -->
@@ -619,6 +629,7 @@ fi]]>
 		<antcall target="linux-debian-jars" />
 		<antcall target="linux-redhat-jars" />
 		<antcall target="linux-systemd-jars" />
+		<antcall target="linux-snapctl-jars" />
 		<antcall target="tinyb-jars" />
 
 		<echo message="Building Kura Distribution for ${build.name}-jars..." />
@@ -1315,6 +1326,17 @@ fi]]>
 		</propertyfile>
 	</target>
 
+	<target name="linux-snapctl-config" if="is.snapctl" depends="linux-config">
+		<propertyfile file="${project.build.directory}/${build.output.name}/config.ini">
+			<entry key="osgi.bundles" operation="+"
+					value=", reference:file:${kura.install.dir}/${kura.symlink}/${plugins.folder}/org.eclipse.kura.linux.snapctl.provider_${org.eclipse.kura.linux.snapctl.provider.version}.jar@4" />
+			<entry key="osgi.bundles" operation="+"
+					value=", reference:file:${kura.install.dir}/${kura.symlink}/${plugins.folder}/org.eclipse.kura.emulator_${org.eclipse.kura.emulator.version}.jar@4" />
+			<entry key="osgi.bundles" operation="+"
+					value=", reference:file:${kura.install.dir}/${kura.symlink}/${plugins.folder}/org.eclipse.kura.emulator.net_${org.eclipse.kura.emulator.net.version}.jar@4" />
+		</propertyfile>
+	</target>
+
 	<target name="emulator-jars" if="is.nn">
 		<zip destfile="${project.build.directory}/${build.output.name}.zip" update="true">
 			<zipfileset file="${project.build.directory}/plugins/org.eclipse.kura.emulator_${org.eclipse.kura.emulator.version}.jar"
@@ -1361,6 +1383,24 @@ fi]]>
 		</zip>
 	</target>
 
+	<target name="linux-snapctl-jars" if="is.snapctl" depends="linux-jars">
+		<zip destfile="${project.build.directory}/${build.output.name}.zip" update="true">
+			<zipfileset file="${project.build.directory}/plugins/org.eclipse.kura.linux.snapctl.provider_${org.eclipse.kura.linux.snapctl.provider.version}.jar"
+                        prefix="${build.output.name}/${plugins.folder}" />
+			<zipfileset file="${project.build.directory}/plugins/org.eclipse.kura.linux.usb.*_${org.eclipse.kura.linux.usb.version}.jar"
+                        prefix="${build.output.name}/${plugins.folder}" />
+			<zipfileset file="${project.build.directory}/plugins/org.eclipse.kura.emulator_${org.eclipse.kura.emulator.version}.jar"
+                        prefix="${build.output.name}/${plugins.folder}" />
+			<zipfileset file="${project.build.directory}/plugins/org.eclipse.kura.emulator.net_${org.eclipse.kura.emulator.net.version}.jar"
+                        prefix="${build.output.name}/${plugins.folder}" />
+		</zip>
+		<condition property="is.tinyb.snapshot" value="">
+			<contains string="${tinyb.version}" substring="SNAPSHOT"/>
+		</condition>
+			<antcall target="tinyb-snapshot-jars-all" />
+			<antcall target="tinyb-no-snapshot-jars-all" />
+	</target>
+
 	<target name="tinyb-jars">
 	    <condition property="is.tinyb.snapshot" value="">
 	        <contains string="${tinyb.version}" substring="SNAPSHOT"/>
@@ -1390,6 +1430,28 @@ fi]]>
                 prefix="${build.output.name}/${plugins.folder}" />
 	    </zip>
 	</target>
+
+    <target name="tinyb-snapshot-jars-all" if="is.tinyb.snapshot">
+        <zip destfile="${project.build.directory}/${build.output.name}.zip" update="true">
+            <mappedresources>
+                <fileset dir="../target-definition/common/repository/plugins" includes="tinyb.*_*.jar" />
+                <globmapper from="*.SNAPSHOT.jar" to="${build.output.name}/${plugins.folder}/*-SNAPSHOT.jar" />
+            </mappedresources>
+            <mappedresources>
+                <fileset dir="../target-definition/common/repository/plugins" includes="tinyb_*.jar" />
+                <globmapper from="*.SNAPSHOT.jar" to="${build.output.name}/${plugins.folder}/*-SNAPSHOT.jar" />
+            </mappedresources>
+        </zip>
+    </target>
+
+    <target name="tinyb-no-snapshot-jars-all" unless="is.tinyb.snapshot">
+        <zip destfile="${project.build.directory}/${build.output.name}.zip" update="true">
+            <zipfileset file="../target-definition/common/repository/plugins/tinyb.*_${tinyb.version}.jar"
+                prefix="${build.output.name}/${plugins.folder}" />
+            <zipfileset file="../target-definition/common/repository/plugins/tinyb_${tinyb.version}.jar"
+                prefix="${build.output.name}/${plugins.folder}" />
+        </zip>
+    </target>
 
 	<target name="web2-jar-win" if="is.web2.jar.available">
     	<echo message="web2-jar-win ${project.build.directory}/${build.output.name}/config.ini..." />
