@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2016 Eurotech and/or its affiliates
+ * Copyright (c) 2011, 2018 Eurotech and/or its affiliates
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -21,7 +21,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * The base class for firewall port forward configurations
  *
  * @param <T>
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 @ProviderType
@@ -56,6 +56,8 @@ public abstract class FirewallPortForwardConfigIP<T extends IPAddress> implement
 
     /** The (options) permitted source port range for inbound connections **/
     private String sourcePortRange;
+
+    private int ruleNumber;
 
     /**
      * Creates and empty port forward configuration
@@ -102,6 +104,7 @@ public abstract class FirewallPortForwardConfigIP<T extends IPAddress> implement
         this.permittedNetwork = permittedNetwork;
         this.permittedMac = permittedMac;
         this.sourcePortRange = sourcePortRange;
+        this.ruleNumber = 0;
     }
 
     @Override
@@ -192,6 +195,14 @@ public abstract class FirewallPortForwardConfigIP<T extends IPAddress> implement
 
     public void setSourcePortRange(String sourcePortRange) {
         this.sourcePortRange = sourcePortRange;
+    }
+
+    public int getRuleNumber() {
+        return this.ruleNumber;
+    }
+
+    public void setRuleNumber(int ruleNumber) {
+        this.ruleNumber = ruleNumber;
     }
 
     @Override

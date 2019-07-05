@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2017 Eurotech and others
+ * Copyright (c) 2011, 2018 Eurotech and others
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -17,12 +17,19 @@ import org.eclipse.kura.KuraException;
 import org.eclipse.kura.net.IP4Address;
 import org.eclipse.kura.net.IPAddress;
 import org.eclipse.kura.net.NetworkPair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Creates an iptables command for a Local Rule, allowing an incoming port connection.
  *
  */
 public class LocalRule {
+
+    private static final Logger logger = LoggerFactory.getLogger(LocalRule.class);
+
+    private static final String ZERO_IPV4_ADDRESS = "0.0.0.0";
+    private static final String ZERO_IPV4_ADDRESS_WITH_SUBNET = "0.0.0.0/0";
 
     // required vars
     private int port;
@@ -65,7 +72,7 @@ public class LocalRule {
             this.permittedNetworkString = permittedNetwork.getIpAddress().getHostAddress() + "/"
                     + permittedNetwork.getPrefix();
         } else {
-            this.permittedNetworkString = "0.0.0.0/0";
+            this.permittedNetworkString = ZERO_IPV4_ADDRESS_WITH_SUBNET;
         }
 
         this.permittedInterfaceName = permittedInterfaceName;
@@ -103,7 +110,7 @@ public class LocalRule {
             this.permittedNetworkString = permittedNetwork.getIpAddress().getHostAddress() + "/"
                     + permittedNetwork.getPrefix();
         } else {
-            this.permittedNetworkString = "0.0.0.0/0";
+            this.permittedNetworkString = ZERO_IPV4_ADDRESS_WITH_SUBNET;
         }
 
         this.permittedInterfaceName = permittedInterfaceName;
@@ -128,7 +135,8 @@ public class LocalRule {
     public LocalRule(String rule) throws KuraException {
         try {
             String[] aRuleTokens = rule.split(" ");
-            for (int i = 0; i < aRuleTokens.length; i++) {
+            int i = 0;
+            while (i < aRuleTokens.length) {
                 if ("-i".equals(aRuleTokens[i])) {
                     if ("!".equals(aRuleTokens[i - 1])) {
                         this.unpermittedInterfaceName = aRuleTokens[++i];
@@ -152,12 +160,13 @@ public class LocalRule {
                 } else if ("--mac-source".equals(aRuleTokens[i])) {
                     this.permittedMAC = aRuleTokens[++i];
                 }
+                i++;
             }
             if (this.permittedNetworkString == null) {
-                this.permittedNetworkString = "0.0.0.0/0";
+                this.permittedNetworkString = ZERO_IPV4_ADDRESS_WITH_SUBNET;
             }
         } catch (Exception e) {
-            throw new KuraException(KuraErrorCode.INTERNAL_ERROR, e);
+            throw new KuraException(KuraErrorCode.CONFIGURATION_ERROR, e);
         }
     }
 
@@ -197,7 +206,7 @@ public class LocalRule {
             this.permittedNetworkString = permittedNetwork.getIpAddress().getHostAddress() + "/"
                     + permittedNetwork.getPrefix();
         } else {
-            this.permittedNetworkString = "0.0.0.0/0";
+            this.permittedNetworkString = ZERO_IPV4_ADDRESS_WITH_SUBNET;
         }
     }
 
@@ -330,10 +339,10 @@ public class LocalRule {
                 String[] split = this.permittedNetworkString.split("/");
                 return new NetworkPair<>((IP4Address) IPAddress.parseHostAddress(split[0]), Short.parseShort(split[1]));
             } else {
-                return new NetworkPair<>((IP4Address) IPAddress.parseHostAddress("0.0.0.0"), (short) 0);
+                return new NetworkPair<>((IP4Address) IPAddress.parseHostAddress(ZERO_IPV4_ADDRESS), (short) 0);
             }
         } catch (Exception e) {
-            throw new KuraException(KuraErrorCode.INTERNAL_ERROR, e);
+            throw new KuraException(KuraErrorCode.CONFIGURATION_ERROR, e);
         }
     }
 
@@ -377,7 +386,7 @@ public class LocalRule {
     }
 
     private String getLocalRuleWithPort(String interfaceString) {
-        String localRuleString = "";
+        String localRuleString;
         if (this.permittedMAC == null && this.sourcePortRange == null) {
             localRuleString = "-A INPUT -p " + this.protocol + " -s " + this.permittedNetworkString
                     + (interfaceString != null ? interfaceString : "") + " --dport " + this.port + " -j ACCEPT";
@@ -398,7 +407,7 @@ public class LocalRule {
     }
 
     private String getLocalRuleWithoutPort(String interfaceString) {
-        String localRuleString = "";
+        String localRuleString;
         if (this.permittedMAC == null && this.sourcePortRange == null) {
             localRuleString = "-A INPUT -p " + this.protocol + " -s " + this.permittedNetworkString
                     + (interfaceString != null ? interfaceString : "") + " --dport " + this.portRange + " -j ACCEPT";
@@ -419,19 +428,25 @@ public class LocalRule {
     }
 
     private boolean isPortRangeValid(String range) {
+        int portStart = 0;
+        int portEnd = 0;
         try {
             String[] rangeParts = range.split(":");
             if (rangeParts.length == 2) {
-                int portStart = Integer.parseInt(rangeParts[0]);
-                int portEnd = Integer.parseInt(rangeParts[1]);
-                return portStart > 0 && portStart < 65535 && portEnd > 0 && portEnd < 65535 && portStart < portEnd
-                        ? true : false;
+                portStart = Integer.parseInt(rangeParts[0]);
+                portEnd = Integer.parseInt(rangeParts[1]);
+                return isPortValid(portStart) && isPortValid(portEnd) && portStart < portEnd ? true : false;
             } else {
                 return false;
             }
         } catch (Exception e) {
+            logger.error("Invalid port range {}:{}", portStart, portEnd, e);
             return false;
         }
+    }
+
+    private boolean isPortValid(int port) {
+        return port > 0 && port < 65535 ? true : false;
     }
 
     @Override
@@ -442,13 +457,32 @@ public class LocalRule {
 
         LocalRule other = (LocalRule) o;
 
-        return this.port == other.port && compareObjects(this.portRange, other.portRange)
-                && compareObjects(this.protocol, other.protocol)
-                && compareObjects(this.permittedMAC, other.permittedMAC)
-                && compareObjects(this.sourcePortRange, other.sourcePortRange)
-                && compareObjects(this.permittedInterfaceName, other.permittedInterfaceName)
-                && compareObjects(this.unpermittedInterfaceName, other.unpermittedInterfaceName)
-                && compareObjects(this.permittedNetworkString, other.permittedNetworkString);
+        if (this.port != other.port) {
+            return false;
+        }
+        if (!compareObjects(this.portRange, other.portRange)) {
+            return false;
+        }
+        if (!compareObjects(this.protocol, other.protocol)) {
+            return false;
+        }
+        if (!compareObjects(this.permittedMAC, other.permittedMAC)) {
+            return false;
+        }
+        if (!compareObjects(this.sourcePortRange, other.sourcePortRange)) {
+            return false;
+        }
+        if (!compareObjects(this.permittedInterfaceName, other.permittedInterfaceName)) {
+            return false;
+        }
+        if (!compareObjects(this.unpermittedInterfaceName, other.unpermittedInterfaceName)) {
+            return false;
+        }
+        if (!compareObjects(this.permittedNetworkString, other.permittedNetworkString)) {
+            return false;
+        }
+
+        return true;
     }
 
     private boolean compareObjects(Object obj1, Object obj2) {

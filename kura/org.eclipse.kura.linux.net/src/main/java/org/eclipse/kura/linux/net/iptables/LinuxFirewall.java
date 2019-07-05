@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2017 Eurotech and/or its affiliates
+ * Copyright (c) 2011, 2018 Eurotech and/or its affiliates
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 public class LinuxFirewall {
 
     private static final Logger logger = LoggerFactory.getLogger(LinuxFirewall.class);
+    private static final String ZERO_IPV4_ADDRESS = "0.0.0.0";
 
     private static LinuxFirewall linuxFirewall;
 
@@ -53,6 +54,10 @@ public class LinuxFirewall {
     private boolean allowForwarding;
 
     private LinuxFirewall() {
+        this.localRules = new LinkedHashSet<>();
+        this.portForwardRules = new LinkedHashSet<>();
+        this.autoNatRules = new LinkedHashSet<>();
+        this.natRules = new LinkedHashSet<>();
         try {
             File cfgFile = new File(FIREWALL_CONFIG_FILE_NAME);
             if (!cfgFile.exists()) {
@@ -101,12 +106,12 @@ public class LinuxFirewall {
                 logger.debug("permittedNetworkPrefix: {}", permittedNetworkPrefix);
 
                 newLocalRule = new LocalRule(port, protocol,
-                        new NetworkPair<IP4Address>((IP4Address) IPAddress.parseHostAddress(permittedNetwork),
+                        new NetworkPair<>((IP4Address) IPAddress.parseHostAddress(permittedNetwork),
                                 Short.parseShort(permittedNetworkPrefix)),
                         permittedInterfaceName, unpermittedInterfaceName, permittedMAC, sourcePortRange);
             } else {
                 newLocalRule = new LocalRule(port, protocol,
-                        new NetworkPair<IP4Address>((IP4Address) IPAddress.parseHostAddress("0.0.0.0"), (short) 0),
+                        new NetworkPair<>((IP4Address) IPAddress.parseHostAddress(ZERO_IPV4_ADDRESS), (short) 0),
                         permittedInterfaceName, permittedInterfaceName, permittedMAC, sourcePortRange);
             }
 
@@ -114,7 +119,7 @@ public class LinuxFirewall {
             locRules.add(newLocalRule);
             addLocalRules(locRules);
         } catch (Exception e) {
-            throw new KuraException(KuraErrorCode.INTERNAL_ERROR, e);
+            throw new KuraException(KuraErrorCode.PROCESS_EXECUTION_ERROR, e);
         }
     }
 
@@ -142,7 +147,7 @@ public class LinuxFirewall {
                 update();
             }
         } catch (Exception e) {
-            throw new KuraException(KuraErrorCode.INTERNAL_ERROR, e);
+            throw new KuraException(KuraErrorCode.PROCESS_EXECUTION_ERROR, e);
         }
     }
 
@@ -164,7 +169,7 @@ public class LinuxFirewall {
             portFwdRules.add(newPortForwardRule);
             addPortForwardRules(portFwdRules);
         } catch (Exception e) {
-            throw new KuraException(KuraErrorCode.INTERNAL_ERROR, e);
+            throw new KuraException(KuraErrorCode.PROCESS_EXECUTION_ERROR, e);
         }
     }
 
@@ -195,7 +200,7 @@ public class LinuxFirewall {
                 update();
             }
         } catch (Exception e) {
-            throw new KuraException(KuraErrorCode.INTERNAL_ERROR, e);
+            throw new KuraException(KuraErrorCode.PROCESS_EXECUTION_ERROR, e);
         }
     }
 
@@ -219,11 +224,11 @@ public class LinuxFirewall {
             }
 
             NATRule newNatRule = new NATRule(sourceInterface, destinationInterface, masquerade);
-            ArrayList<NATRule> natRules = new ArrayList<>();
-            natRules.add(newNatRule);
-            addAutoNatRules(natRules);
+            ArrayList<NATRule> natRulesList = new ArrayList<>();
+            natRulesList.add(newNatRule);
+            addAutoNatRules(natRulesList);
         } catch (Exception e) {
-            throw new KuraException(KuraErrorCode.INTERNAL_ERROR, e);
+            throw new KuraException(KuraErrorCode.PROCESS_EXECUTION_ERROR, e);
         }
     }
 
@@ -253,11 +258,11 @@ public class LinuxFirewall {
             NATRule newNatRule = new NATRule(sourceInterface, destinationInterface, protocol, source, destination,
                     masquerade);
 
-            ArrayList<NATRule> natRules = new ArrayList<>();
-            natRules.add(newNatRule);
-            addNatRules(natRules);
+            ArrayList<NATRule> natRulesList = new ArrayList<>();
+            natRulesList.add(newNatRule);
+            addNatRules(natRulesList);
         } catch (Exception e) {
-            throw new KuraException(KuraErrorCode.INTERNAL_ERROR, e);
+            throw new KuraException(KuraErrorCode.PROCESS_EXECUTION_ERROR, e);
         }
     }
 
@@ -294,40 +299,24 @@ public class LinuxFirewall {
                 update();
             }
         } catch (Exception e) {
-            throw new KuraException(KuraErrorCode.INTERNAL_ERROR, e);
+            throw new KuraException(KuraErrorCode.PROCESS_EXECUTION_ERROR, e);
         }
     }
 
-    public Set<LocalRule> getLocalRules() throws KuraException {
-        try {
-            return this.localRules;
-        } catch (Exception e) {
-            throw new KuraException(KuraErrorCode.INTERNAL_ERROR, e);
-        }
+    public Set<LocalRule> getLocalRules() {
+        return this.localRules;
     }
 
-    public Set<PortForwardRule> getPortForwardRules() throws KuraException {
-        try {
-            return this.portForwardRules;
-        } catch (Exception e) {
-            throw new KuraException(KuraErrorCode.INTERNAL_ERROR, e);
-        }
+    public Set<PortForwardRule> getPortForwardRules() {
+        return this.portForwardRules;
     }
 
-    public Set<NATRule> getAutoNatRules() throws KuraException {
-        try {
-            return this.autoNatRules;
-        } catch (Exception e) {
-            throw new KuraException(KuraErrorCode.INTERNAL_ERROR, e);
-        }
+    public Set<NATRule> getAutoNatRules() {
+        return this.autoNatRules;
     }
 
-    public Set<NATRule> getNatRules() throws KuraException {
-        try {
-            return this.natRules;
-        } catch (Exception e) {
-            throw new KuraException(KuraErrorCode.INTERNAL_ERROR, e);
-        }
+    public Set<NATRule> getNatRules() {
+        return this.natRules;
     }
 
     public void deleteLocalRule(LocalRule rule) throws KuraException {
@@ -335,41 +324,37 @@ public class LinuxFirewall {
             this.localRules.remove(rule);
             update();
         } catch (Exception e) {
-            throw new KuraException(KuraErrorCode.INTERNAL_ERROR, e);
+            throw new KuraException(KuraErrorCode.PROCESS_EXECUTION_ERROR, e);
         }
     }
 
     public void deletePortForwardRule(PortForwardRule rule) throws KuraException {
-        if (this.portForwardRules == null) {
+        if (this.portForwardRules.isEmpty()) {
             return;
         }
         try {
             this.portForwardRules.remove(rule);
-            if (this.autoNatRules != null && this.autoNatRules.isEmpty() && this.natRules != null
-                    && this.natRules.isEmpty() && this.portForwardRules != null && this.portForwardRules.isEmpty()) {
-
+            if (this.autoNatRules.isEmpty() && this.natRules.isEmpty() && this.portForwardRules.isEmpty()) {
                 this.allowForwarding = false;
             }
             update();
         } catch (Exception e) {
-            throw new KuraException(KuraErrorCode.INTERNAL_ERROR, e);
+            throw new KuraException(KuraErrorCode.PROCESS_EXECUTION_ERROR, e);
         }
     }
 
     public void deleteAutoNatRule(NATRule rule) throws KuraException {
-        if (this.autoNatRules == null) {
+        if (this.autoNatRules.isEmpty()) {
             return;
         }
         try {
             this.autoNatRules.remove(rule);
-            if (this.autoNatRules != null && this.autoNatRules.isEmpty() && this.natRules != null
-                    && this.natRules.isEmpty() && this.portForwardRules != null && this.portForwardRules.isEmpty()) {
-
+            if (this.autoNatRules.isEmpty() && this.natRules.isEmpty() && this.portForwardRules.isEmpty()) {
                 this.allowForwarding = false;
             }
             update();
         } catch (Exception e) {
-            throw new KuraException(KuraErrorCode.INTERNAL_ERROR, e);
+            throw new KuraException(KuraErrorCode.PROCESS_EXECUTION_ERROR, e);
         }
     }
 
@@ -378,64 +363,57 @@ public class LinuxFirewall {
             this.localRules.clear();
             update();
         } catch (Exception e) {
-            throw new KuraException(KuraErrorCode.INTERNAL_ERROR, e);
+            throw new KuraException(KuraErrorCode.PROCESS_EXECUTION_ERROR, e);
         }
     }
 
     public void deleteAllPortForwardRules() throws KuraException {
         try {
             this.portForwardRules.clear();
-            if (this.autoNatRules != null && this.autoNatRules.isEmpty() && this.natRules != null
-                    && this.natRules.isEmpty()) {
-
+            if (this.autoNatRules.isEmpty() && this.natRules.isEmpty()) {
                 this.allowForwarding = false;
             }
             update();
         } catch (Exception e) {
-            throw new KuraException(KuraErrorCode.INTERNAL_ERROR, e);
+            throw new KuraException(KuraErrorCode.PROCESS_EXECUTION_ERROR, e);
         }
     }
 
-    public void replaceAllNatRules(LinkedHashSet<NATRule> newNatRules) throws KuraException {
+    public void replaceAllNatRules(Set<NATRule> newNatRules) throws KuraException {
         try {
             this.autoNatRules = newNatRules;
-            if (this.autoNatRules != null && !this.autoNatRules.isEmpty()
-                    || this.natRules != null && !this.natRules.isEmpty()
-                    || this.portForwardRules != null && !this.portForwardRules.isEmpty()) {
-                this.allowForwarding = true;
-            } else {
+            if (this.autoNatRules.isEmpty() && this.natRules.isEmpty() && this.portForwardRules.isEmpty()) {
                 this.allowForwarding = false;
+            } else {
+                this.allowForwarding = true;
             }
             update();
         } catch (Exception e) {
-            throw new KuraException(KuraErrorCode.INTERNAL_ERROR, e);
+            throw new KuraException(KuraErrorCode.PROCESS_EXECUTION_ERROR, e);
         }
     }
 
     public void deleteAllAutoNatRules() throws KuraException {
         try {
             this.autoNatRules.clear();
-            if (this.natRules != null && this.natRules.isEmpty() && this.portForwardRules != null
-                    && this.portForwardRules.isEmpty()) {
-
+            if (this.natRules.isEmpty() && this.portForwardRules.isEmpty()) {
                 this.allowForwarding = false;
             }
             update();
         } catch (Exception e) {
-            throw new KuraException(KuraErrorCode.INTERNAL_ERROR, e);
+            throw new KuraException(KuraErrorCode.PROCESS_EXECUTION_ERROR, e);
         }
     }
 
     public void deleteAllNatRules() throws KuraException {
         try {
             this.natRules.clear();
-            if (this.autoNatRules != null && this.autoNatRules.isEmpty() && this.portForwardRules != null
-                    && this.portForwardRules.isEmpty()) {
+            if (this.autoNatRules.isEmpty() && this.portForwardRules.isEmpty()) {
                 this.allowForwarding = false;
             }
             update();
         } catch (KuraException e) {
-            throw new KuraException(KuraErrorCode.INTERNAL_ERROR, e);
+            throw new KuraException(KuraErrorCode.PROCESS_EXECUTION_ERROR, e);
         }
     }
 
@@ -454,9 +432,7 @@ public class LinuxFirewall {
     }
 
     private void applyRules() throws KuraException {
-        if (this.portForwardRules != null && !this.portForwardRules.isEmpty()
-                || this.autoNatRules != null && !this.autoNatRules.isEmpty()
-                || this.natRules != null && !this.natRules.isEmpty()) {
+        if (!this.portForwardRules.isEmpty() || !this.autoNatRules.isEmpty() || !this.natRules.isEmpty()) {
             this.allowForwarding = true;
         }
         IptablesConfig iptables = new IptablesConfig(this.localRules, this.portForwardRules, this.autoNatRules,
@@ -476,7 +452,7 @@ public class LinuxFirewall {
                 fw.write('0');
             }
         } catch (Exception e) {
-            throw new KuraException(KuraErrorCode.INTERNAL_ERROR, e);
+            throw new KuraException(KuraErrorCode.STORE_ERROR, e);
         }
     }
 
@@ -493,7 +469,7 @@ public class LinuxFirewall {
                 proc.waitFor();
             }
         } catch (Exception e) {
-            throw new KuraException(KuraErrorCode.INTERNAL_ERROR, e);
+            throw new KuraException(KuraErrorCode.PROCESS_EXECUTION_ERROR, e);
         } finally {
             if (proc != null) {
                 ProcessUtil.destroy(proc);

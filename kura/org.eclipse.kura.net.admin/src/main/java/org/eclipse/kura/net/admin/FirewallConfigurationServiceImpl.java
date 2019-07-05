@@ -262,6 +262,7 @@ public class FirewallConfigurationServiceImpl implements FirewallConfigurationSe
                     portForwardEntry.getPermittedNetwork().getIpAddress().getHostAddress(),
                     portForwardEntry.getPermittedNetwork().getPrefix(), portForwardEntry.getPermittedMac(),
                     portForwardEntry.getSourcePortRange());
+            portForwardRule.setRuleTag(portForwardEntry.getRuleNumber());
             portForwardRules.add(portForwardRule);
         }
 
@@ -278,6 +279,7 @@ public class FirewallConfigurationServiceImpl implements FirewallConfigurationSe
             NATRule natRule = new NATRule(natConfig.getSourceInterface(), natConfig.getDestinationInterface(),
                     natConfig.getProtocol(), natConfig.getSource(), natConfig.getDestination(),
                     natConfig.isMasquerade());
+            natRule.setRuleTag(natConfig.getRuleNumber());
             natRules.add(natRule);
         }
 

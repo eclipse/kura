@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 import org.eclipse.kura.KuraErrorCode;
 import org.eclipse.kura.KuraException;
@@ -38,6 +39,7 @@ import org.slf4j.LoggerFactory;
 public class FirewallAutoNatConfigWriter implements NetworkConfigurationVisitor {
 
     private static final Logger logger = LoggerFactory.getLogger(FirewallAutoNatConfigWriter.class);
+    private static final String NET_INTERFACE_STR = "net.interface.";
 
     private static FirewallAutoNatConfigWriter instance;
 
@@ -95,14 +97,15 @@ public class FirewallAutoNatConfigWriter implements NetworkConfigurationVisitor 
             kuraProps = new Properties();
         }
 
-        StringBuilder sb = new StringBuilder().append("net.interface.").append(interfaceName)
+        StringBuilder sb = new StringBuilder().append(NET_INTERFACE_STR).append(interfaceName)
                 .append(".config.nat.enabled");
         kuraProps.put(sb.toString(), Boolean.toString(natEnabled));
         if (natEnabled && srcIface != null && dstIface != null) {
-            sb = new StringBuilder().append("net.interface.").append(interfaceName).append(".config.nat.dst.interface");
+            sb = new StringBuilder().append(NET_INTERFACE_STR).append(interfaceName)
+                    .append(".config.nat.dst.interface");
             kuraProps.put(sb.toString(), dstIface);
 
-            sb = new StringBuilder().append("net.interface.").append(interfaceName).append(".config.nat.masquerade");
+            sb = new StringBuilder().append(NET_INTERFACE_STR).append(interfaceName).append(".config.nat.masquerade");
             kuraProps.put(sb.toString(), Boolean.toString(useMasquerade));
         }
 
@@ -128,55 +131,58 @@ public class FirewallAutoNatConfigWriter implements NetworkConfigurationVisitor 
         try {
             KuranetConfig.storeProperties(kuraProps);
         } catch (Exception e) {
-            throw new KuraException(KuraErrorCode.INTERNAL_ERROR, e);
+            throw new KuraException(KuraErrorCode.STORE_ERROR, e);
         }
     }
 
-    private LinkedHashSet<NATRule> getNatConfigs(NetworkConfiguration networkConfig) {
-        LinkedHashSet<NATRule> natConfigs = new LinkedHashSet<>();
+    private Set<NATRule> getNatConfigs(NetworkConfiguration networkConfig) {
 
-        if (networkConfig != null) {
-            ArrayList<String> wanList = new ArrayList<>();
-            ArrayList<String> natList = new ArrayList<>();
+        if (networkConfig == null) {
+            return new LinkedHashSet<>();
+        }
+        ArrayList<String> wanList = new ArrayList<>();
+        ArrayList<String> natList = new ArrayList<>();
 
-            // get relevant interfaces
-            for (NetInterfaceConfig<? extends NetInterfaceAddressConfig> netInterfaceConfig : networkConfig
-                    .getNetInterfaceConfigs()) {
-                String interfaceName = netInterfaceConfig.getName();
-                NetInterfaceStatus status = NetInterfaceStatus.netIPv4StatusUnknown;
-                boolean isNat = false;
+        // get relevant interfaces
+        for (NetInterfaceConfig<? extends NetInterfaceAddressConfig> netInterfaceConfig : networkConfig
+                .getNetInterfaceConfigs()) {
+            String interfaceName = netInterfaceConfig.getName();
+            NetInterfaceStatus status = NetInterfaceStatus.netIPv4StatusUnknown;
+            boolean isNat = false;
 
-                List<NetConfig> netConfigs = ((AbstractNetInterface<?>) netInterfaceConfig).getNetConfigs();
-                for (NetConfig netConfig : netConfigs) {
-                    if (netConfig instanceof NetConfigIP4) {
-                        status = ((NetConfigIP4) netConfig).getStatus();
-                    } else if (netConfig instanceof FirewallAutoNatConfig) {
-                        logger.debug("getNatConfigs() :: FirewallAutoNatConfig: {}",
-                                ((FirewallAutoNatConfig) netConfig).toString());
-                        isNat = true;
-                    } else if (netConfig instanceof FirewallNatConfig) {
-                        logger.debug("getNatConfigs() ::  FirewallNatConfig: {}",
-                                ((FirewallNatConfig) netConfig).toString());
-                    }
-                }
-
-                if (NetInterfaceStatus.netIPv4StatusEnabledWAN.equals(status)) {
-                    wanList.add(interfaceName);
-                } else if (NetInterfaceStatus.netIPv4StatusEnabledLAN.equals(status) && isNat) {
-                    natList.add(interfaceName);
+            List<NetConfig> netConfigs = ((AbstractNetInterface<?>) netInterfaceConfig).getNetConfigs();
+            for (NetConfig netConfig : netConfigs) {
+                if (netConfig instanceof NetConfigIP4) {
+                    status = ((NetConfigIP4) netConfig).getStatus();
+                } else if (netConfig instanceof FirewallAutoNatConfig) {
+                    logger.debug("getNatConfigs() :: FirewallAutoNatConfig: {}",
+                            ((FirewallAutoNatConfig) netConfig).toString());
+                    isNat = true;
+                } else if (netConfig instanceof FirewallNatConfig) {
+                    logger.debug("getNatConfigs() ::  FirewallNatConfig: {}",
+                            ((FirewallNatConfig) netConfig).toString());
                 }
             }
 
-            // create a nat rule for each interface to all potential wan interfaces
-            for (String sourceInterface : natList) {
-                for (String destinationInterface : wanList) {
-                    logger.debug(
-                            "Got NAT rule for source: " + sourceInterface + ", destination: " + destinationInterface);
-                    natConfigs.add(new NATRule(sourceInterface, destinationInterface, true));
-                }
+            if (NetInterfaceStatus.netIPv4StatusEnabledWAN.equals(status)) {
+                wanList.add(interfaceName);
+            } else if (NetInterfaceStatus.netIPv4StatusEnabledLAN.equals(status) && isNat) {
+                natList.add(interfaceName);
             }
         }
 
+        return getNATconfigurations(natList, wanList);
+    }
+
+    private Set<NATRule> getNATconfigurations(List<String> natList, List<String> wanList) {
+        LinkedHashSet<NATRule> natConfigs = new LinkedHashSet<>();
+        // create a nat rule for each interface to all potential wan interfaces
+        for (String sourceInterface : natList) {
+            for (String destinationInterface : wanList) {
+                logger.debug("Got NAT rule for source: " + sourceInterface + ", destination: " + destinationInterface);
+                natConfigs.add(new NATRule(sourceInterface, destinationInterface, true));
+            }
+        }
         return natConfigs;
     }
 }

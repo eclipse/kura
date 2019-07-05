@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2017 Eurotech and/or its affiliates
+ * Copyright (c) 2011, 2018 Eurotech and/or its affiliates
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -37,6 +37,8 @@ public class FilterForwardChainRule {
     private int srcPortFirst;
     private int srcPortLast;
     private int dstPort;
+    private boolean matched;
+    private String ruleTag;
 
     public FilterForwardChainRule(String inputInterface, String outputInterface, String srcNetwork, short srcMask,
             String dstNetwork, short dstMask, String protocol, String permittedMacAddress, int srcPortFirst,
@@ -51,12 +53,15 @@ public class FilterForwardChainRule {
         this.permittedMacAddress = permittedMacAddress;
         this.srcPortFirst = srcPortFirst;
         this.srcPortLast = srcPortLast;
+        this.ruleTag = "";
     }
 
     public FilterForwardChainRule(String rule) throws KuraException {
+        this.ruleTag = "";
         try {
             String[] aRuleTokens = rule.split(" ");
-            for (int i = 0; i < aRuleTokens.length; i++) {
+            int i = 0;
+            while (i < aRuleTokens.length) {
                 if ("-i".equals(aRuleTokens[i])) {
                     this.inputInterface = aRuleTokens[++i];
                 } else if ("-o".equals(aRuleTokens[i])) {
@@ -71,11 +76,14 @@ public class FilterForwardChainRule {
                 } else if ("-d".equals(aRuleTokens[i])) {
                     this.dstNetwork = aRuleTokens[i + 1].split("/")[0];
                     this.dstMask = Short.parseShort(aRuleTokens[++i].split("/")[1]);
+                } else if ("--comment".equals(aRuleTokens[i])) {
+                    this.ruleTag = aRuleTokens[++i];
                 }
+                i++;
             }
             this.rule = new StringBuilder("iptables ").append(rule).toString();
         } catch (Exception e) {
-            throw new KuraException(KuraErrorCode.INTERNAL_ERROR, e);
+            throw new KuraException(KuraErrorCode.CONFIGURATION_ERROR, e);
         }
     }
 
@@ -113,6 +121,9 @@ public class FilterForwardChainRule {
             sb.append(" --dport ").append(this.dstPort);
         }
         sb.append(" -j ACCEPT");
+        if (this.ruleTag != null) {
+            sb.append(" -m comment --comment \"").append(this.ruleTag).append('"');
+        }
         ret.add(sb.toString());
         sb = new StringBuilder("-A FORWARD");
         if (this.dstNetwork != null) {
@@ -127,6 +138,9 @@ public class FilterForwardChainRule {
             sb.append(" -p ").append(this.protocol);
         }
         sb.append(" -m state --state RELATED,ESTABLISHED -j ACCEPT");
+        if (this.ruleTag != null) {
+            sb.append(" -m comment --comment \"").append(this.ruleTag).append('"');
+        }
         ret.add(sb.toString());
         return ret;
     }
@@ -163,11 +177,34 @@ public class FilterForwardChainRule {
             return false;
         }
 
-        return compareObjects(this.rule, other.rule) && compareObjects(this.inputInterface, other.inputInterface)
-                && compareObjects(this.outputInterface, other.outputInterface)
-                && compareObjects(this.state, other.state) && compareObjects(this.srcNetwork, other.srcNetwork)
-                && this.srcMask == other.srcMask && compareObjects(this.dstNetwork, other.dstNetwork)
-                && this.dstMask == other.dstMask && compareObjects(this.protocol, other.protocol);
+        if (!compareObjects(this.rule, other.rule)) {
+            return false;
+        }
+        if (!compareObjects(this.inputInterface, other.inputInterface)) {
+            return false;
+        }
+        if (!compareObjects(this.outputInterface, other.outputInterface)) {
+            return false;
+        }
+        if (!compareObjects(this.state, other.state)) {
+            return false;
+        }
+        if (!compareObjects(this.srcNetwork, other.srcNetwork)) {
+            return false;
+        }
+        if (this.srcMask != other.srcMask) {
+            return false;
+        }
+        if (!compareObjects(this.dstNetwork, other.dstNetwork)) {
+            return false;
+        }
+        if (this.dstMask != other.dstMask) {
+            return false;
+        }
+        if (!compareObjects(this.protocol, other.protocol)) {
+            return false;
+        }
+        return true;
     }
 
     private boolean compareObjects(Object obj1, Object obj2) {
@@ -177,6 +214,10 @@ public class FilterForwardChainRule {
             return false;
         }
         return true;
+    }
+
+    public boolean isInboundForwardRule() {
+        return this.state != null ? true : false;
     }
 
     @Override
@@ -214,5 +255,21 @@ public class FilterForwardChainRule {
 
     public String getProtocol() {
         return this.protocol;
+    }
+
+    public boolean isMatched() {
+        return this.matched;
+    }
+
+    public void setMatched(boolean matched) {
+        this.matched = matched;
+    }
+
+    public String getRuleTag() {
+        return this.ruleTag;
+    }
+
+    public void setRuleTag(String ruleTag) {
+        this.ruleTag = ruleTag;
     }
 }

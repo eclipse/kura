@@ -110,6 +110,8 @@ public class GwtNetworkServiceImpl extends OsgiRemoteServiceServlet implements G
 
     private static final Logger logger = LoggerFactory.getLogger(GwtNetworkServiceImpl.class);
 
+    private static final String ZERO_IPV4_ADDRESS_WITH_SUBNET = "0.0.0.0/0";
+
     @Override
     public List<GwtNetInterfaceConfig> findNetInterfaceConfigurations() throws GwtKuraException {
         List<GwtNetInterfaceConfig> result = privateFindNetInterfaceConfigurations();
@@ -1138,7 +1140,7 @@ public class GwtNetworkServiceImpl extends OsgiRemoteServiceServlet implements G
     }
 
     @Override
-    public ArrayList<GwtFirewallPortForwardEntry> findDeviceFirewallPortForwards(GwtXSRFToken xsrfToken)
+    public List<GwtFirewallPortForwardEntry> findDeviceFirewallPortForwards(GwtXSRFToken xsrfToken)
             throws GwtKuraException {
         checkXSRFToken(xsrfToken);
         NetworkAdminService nas = ServiceLocator.getInstance().getService(NetworkAdminService.class);
@@ -1146,31 +1148,30 @@ public class GwtNetworkServiceImpl extends OsgiRemoteServiceServlet implements G
 
         try {
             List<NetConfig> firewallConfigs = nas.getFirewallConfiguration();
-            if (firewallConfigs != null && !firewallConfigs.isEmpty()) {
-                for (NetConfig netConfig : firewallConfigs) {
-                    if (netConfig instanceof FirewallPortForwardConfigIP4) {
-                        logger.debug("findDeviceFirewallPortForwards() :: adding new Port Forward Entry");
-                        GwtFirewallPortForwardEntry entry = new GwtFirewallPortForwardEntry();
-                        entry.setInboundInterface(((FirewallPortForwardConfigIP4) netConfig).getInboundInterface());
-                        entry.setOutboundInterface(((FirewallPortForwardConfigIP4) netConfig).getOutboundInterface());
-                        entry.setAddress(((FirewallPortForwardConfigIP4) netConfig).getAddress().getHostAddress());
-                        entry.setProtocol(((FirewallPortForwardConfigIP4) netConfig).getProtocol().toString());
-                        entry.setInPort(((FirewallPortForwardConfigIP4) netConfig).getInPort());
-                        entry.setOutPort(((FirewallPortForwardConfigIP4) netConfig).getOutPort());
-                        String masquerade = ((FirewallPortForwardConfigIP4) netConfig).isMasquerade() ? "yes" : "no";
-                        entry.setMasquerade(masquerade);
-                        entry.setPermittedNetwork(
-                                ((FirewallPortForwardConfigIP4) netConfig).getPermittedNetwork().toString());
-                        entry.setPermittedMAC(((FirewallPortForwardConfigIP4) netConfig).getPermittedMac());
-                        entry.setSourcePortRange(((FirewallPortForwardConfigIP4) netConfig).getSourcePortRange());
+            if (firewallConfigs.isEmpty()) {
+                return new ArrayList<>(gwtPortForwardEntries);
+            }
+            for (NetConfig netConfig : firewallConfigs) {
+                if (netConfig instanceof FirewallPortForwardConfigIP4) {
+                    logger.debug("findDeviceFirewallPortForwards() :: adding new Port Forward Entry");
+                    GwtFirewallPortForwardEntry entry = new GwtFirewallPortForwardEntry();
+                    entry.setInboundInterface(((FirewallPortForwardConfigIP4) netConfig).getInboundInterface());
+                    entry.setOutboundInterface(((FirewallPortForwardConfigIP4) netConfig).getOutboundInterface());
+                    entry.setAddress(((FirewallPortForwardConfigIP4) netConfig).getAddress().getHostAddress());
+                    entry.setProtocol(((FirewallPortForwardConfigIP4) netConfig).getProtocol().toString());
+                    entry.setInPort(((FirewallPortForwardConfigIP4) netConfig).getInPort());
+                    entry.setOutPort(((FirewallPortForwardConfigIP4) netConfig).getOutPort());
+                    String masquerade = ((FirewallPortForwardConfigIP4) netConfig).isMasquerade() ? "yes" : "no";
+                    entry.setMasquerade(masquerade);
+                    entry.setPermittedNetwork(
+                            ((FirewallPortForwardConfigIP4) netConfig).getPermittedNetwork().toString());
+                    entry.setPermittedMAC(((FirewallPortForwardConfigIP4) netConfig).getPermittedMac());
+                    entry.setSourcePortRange(((FirewallPortForwardConfigIP4) netConfig).getSourcePortRange());
 
-                        gwtPortForwardEntries.add(entry);
-                    }
+                    gwtPortForwardEntries.add(entry);
                 }
             }
-
             return new ArrayList<>(gwtPortForwardEntries);
-
         } catch (KuraException e) {
             logger.warn("Failed", e);
             throw new GwtKuraException(GwtKuraErrorCode.INTERNAL_ERROR, e);
@@ -1178,7 +1179,7 @@ public class GwtNetworkServiceImpl extends OsgiRemoteServiceServlet implements G
     }
 
     @Override
-    public ArrayList<GwtFirewallNatEntry> findDeviceFirewallNATs(GwtXSRFToken xsrfToken) throws GwtKuraException {
+    public List<GwtFirewallNatEntry> findDeviceFirewallNATs(GwtXSRFToken xsrfToken) throws GwtKuraException {
 
         checkXSRFToken(xsrfToken);
         NetworkAdminService nas = ServiceLocator.getInstance().getService(NetworkAdminService.class);
@@ -1186,25 +1187,24 @@ public class GwtNetworkServiceImpl extends OsgiRemoteServiceServlet implements G
 
         try {
             List<NetConfig> firewallConfigs = nas.getFirewallConfiguration();
-            if (firewallConfigs != null && !firewallConfigs.isEmpty()) {
-                for (NetConfig netConfig : firewallConfigs) {
-                    if (netConfig instanceof FirewallNatConfig) {
-                        logger.debug("findDeviceFirewallNATs() :: adding new NAT Entry");
-                        GwtFirewallNatEntry entry = new GwtFirewallNatEntry();
-                        entry.setInInterface(((FirewallNatConfig) netConfig).getSourceInterface());
-                        entry.setOutInterface(((FirewallNatConfig) netConfig).getDestinationInterface());
-                        entry.setProtocol(((FirewallNatConfig) netConfig).getProtocol());
-                        entry.setSourceNetwork(((FirewallNatConfig) netConfig).getSource());
-                        entry.setDestinationNetwork(((FirewallNatConfig) netConfig).getDestination());
-                        String masquerade = ((FirewallNatConfig) netConfig).isMasquerade() ? "yes" : "no";
-                        entry.setMasquerade(masquerade);
-                        gwtNatEntries.add(entry);
-                    }
+            if (firewallConfigs.isEmpty()) {
+                return new ArrayList<>(gwtNatEntries);
+            }
+            for (NetConfig netConfig : firewallConfigs) {
+                if (netConfig instanceof FirewallNatConfig) {
+                    logger.debug("findDeviceFirewallNATs() :: adding new NAT Entry");
+                    GwtFirewallNatEntry entry = new GwtFirewallNatEntry();
+                    entry.setInInterface(((FirewallNatConfig) netConfig).getSourceInterface());
+                    entry.setOutInterface(((FirewallNatConfig) netConfig).getDestinationInterface());
+                    entry.setProtocol(((FirewallNatConfig) netConfig).getProtocol());
+                    entry.setSourceNetwork(((FirewallNatConfig) netConfig).getSource());
+                    entry.setDestinationNetwork(((FirewallNatConfig) netConfig).getDestination());
+                    String masquerade = ((FirewallNatConfig) netConfig).isMasquerade() ? "yes" : "no";
+                    entry.setMasquerade(masquerade);
+                    gwtNatEntries.add(entry);
                 }
             }
-
             return new ArrayList<>(gwtNatEntries);
-
         } catch (KuraException e) {
             logger.warn("Failed", e);
             throw new GwtKuraException(GwtKuraErrorCode.INTERNAL_ERROR, e);
@@ -1356,6 +1356,7 @@ public class GwtNetworkServiceImpl extends OsgiRemoteServiceServlet implements G
         NetworkAdminService nas = ServiceLocator.getInstance().getService(NetworkAdminService.class);
         List<FirewallPortForwardConfigIP<? extends IPAddress>> firewallPortForwardConfigIPs = new ArrayList<>();
 
+        int entryNumber = 0;
         try {
             for (GwtFirewallPortForwardEntry entry : entries) {
                 String network = null;
@@ -1378,7 +1379,7 @@ public class GwtNetworkServiceImpl extends OsgiRemoteServiceServlet implements G
                         .setProtocol(NetProtocol.valueOf(GwtSafeHtmlUtils.htmlEscape(entry.getProtocol())));
                 firewallPortForwardConfigIP.setInPort(entry.getInPort());
                 firewallPortForwardConfigIP.setOutPort(entry.getOutPort());
-                boolean masquerade = entry.getMasquerade().equals("yes") ? true : false;
+                boolean masquerade = "yes".equals(entry.getMasquerade()) ? true : false;
                 firewallPortForwardConfigIP.setMasquerade(masquerade);
                 if (network != null && prefix != null) {
                     firewallPortForwardConfigIP.setPermittedNetwork(new NetworkPair<>(
@@ -1387,6 +1388,7 @@ public class GwtNetworkServiceImpl extends OsgiRemoteServiceServlet implements G
                 firewallPortForwardConfigIP.setPermittedMac(GwtSafeHtmlUtils.htmlEscape(entry.getPermittedMAC()));
                 firewallPortForwardConfigIP.setSourcePortRange(GwtSafeHtmlUtils.htmlEscape(entry.getSourcePortRange()));
 
+                firewallPortForwardConfigIP.setRuleNumber(++entryNumber);
                 logger.debug("adding port forward entry for inbound iface {} - port {}",
                         GwtSafeHtmlUtils.htmlEscape(entry.getInboundInterface()), entry.getInPort());
                 firewallPortForwardConfigIPs.add(firewallPortForwardConfigIP);
@@ -1408,24 +1410,26 @@ public class GwtNetworkServiceImpl extends OsgiRemoteServiceServlet implements G
         NetworkAdminService nas = ServiceLocator.getInstance().getService(NetworkAdminService.class);
         List<FirewallNatConfig> firewallNatConfigs = new ArrayList<>();
 
+        int entryNumber = 0;
         for (GwtFirewallNatEntry entry : entries) {
 
             String srcNetwork = GwtSafeHtmlUtils.htmlEscape(entry.getSourceNetwork());
             String dstNetwork = GwtSafeHtmlUtils.htmlEscape(entry.getDestinationNetwork());
             if (srcNetwork == null || "".equals(srcNetwork)) {
-                srcNetwork = "0.0.0.0/0";
+                srcNetwork = ZERO_IPV4_ADDRESS_WITH_SUBNET;
             }
             if (dstNetwork == null || "".equals(dstNetwork)) {
-                dstNetwork = "0.0.0.0/0";
+                dstNetwork = ZERO_IPV4_ADDRESS_WITH_SUBNET;
             }
 
-            boolean masquerade = entry.getMasquerade().equals("yes") ? true : false;
+            boolean masquerade = "yes".equals(entry.getMasquerade()) ? true : false;
 
             FirewallNatConfig firewallNatConfig = new FirewallNatConfig(
                     GwtSafeHtmlUtils.htmlEscape(entry.getInInterface()),
                     GwtSafeHtmlUtils.htmlEscape(entry.getOutInterface()),
                     GwtSafeHtmlUtils.htmlEscape(entry.getProtocol()), srcNetwork, dstNetwork, masquerade);
 
+            firewallNatConfig.setRuleNumber(++entryNumber);
             firewallNatConfigs.add(firewallNatConfig);
         }
 

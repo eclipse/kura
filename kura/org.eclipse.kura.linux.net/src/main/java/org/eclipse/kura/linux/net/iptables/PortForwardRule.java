@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2017 Eurotech and/or its affiliates
+ * Copyright (c) 2011, 2018 Eurotech and/or its affiliates
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -19,6 +19,8 @@ import java.util.List;
  */
 public class PortForwardRule {
 
+    protected static final String RULE_TAG = "pf";
+
     // required
     private String inboundIface;
     private String outboundIface;
@@ -33,6 +35,8 @@ public class PortForwardRule {
     private int permittedNetworkMask;
     private String permittedMAC;
     private String sourcePortRange;
+
+    private String ruleTag;
 
     /**
      * Constructor of <code>PortForwardRule</code> object.
@@ -114,13 +118,19 @@ public class PortForwardRule {
             srcPortFirst = Integer.parseInt(this.sourcePortRange.split(":")[0]);
             srcPortLast = Integer.parseInt(this.sourcePortRange.split(":")[1]);
         }
-        return new NatPreroutingChainRule(this.inboundIface, this.protocol, this.inPort, this.outPort, srcPortFirst,
-                srcPortLast, this.address, this.permittedNetwork, this.permittedNetworkMask, this.permittedMAC);
+        NatPreroutingChainRule natPreroutingChainRule = new NatPreroutingChainRule(this.inboundIface, this.protocol,
+                this.inPort, this.outPort, srcPortFirst, srcPortLast, this.address, this.permittedNetwork,
+                this.permittedNetworkMask, this.permittedMAC);
+        natPreroutingChainRule.setRuleTag(this.ruleTag);
+        return natPreroutingChainRule;
     }
 
     public NatPostroutingChainRule getNatPostroutingChainRule() {
-        return new NatPostroutingChainRule(this.address, (short) 32, this.permittedNetwork,
-                (short) this.permittedNetworkMask, this.outboundIface, this.protocol, this.masquerade);
+        NatPostroutingChainRule natPostroutingChainRule = new NatPostroutingChainRule(this.address, (short) 32,
+                this.permittedNetwork, (short) this.permittedNetworkMask, this.outboundIface, this.protocol,
+                this.masquerade);
+        natPostroutingChainRule.setRuleTag(this.ruleTag);
+        return natPostroutingChainRule;
     }
 
     public FilterForwardChainRule getFilterForwardChainRule() {
@@ -130,9 +140,11 @@ public class PortForwardRule {
             srcPortFirst = Integer.parseInt(this.sourcePortRange.split(":")[0]);
             srcPortLast = Integer.parseInt(this.sourcePortRange.split(":")[1]);
         }
-        return new FilterForwardChainRule(this.inboundIface, this.outboundIface, this.permittedNetwork,
-                (short) this.permittedNetworkMask, this.address, (short) 32, this.protocol, this.permittedMAC,
-                srcPortFirst, srcPortLast);
+        FilterForwardChainRule filterForwardChainRule = new FilterForwardChainRule(this.inboundIface,
+                this.outboundIface, this.permittedNetwork, (short) this.permittedNetworkMask, this.address, (short) 32,
+                this.protocol, this.permittedMAC, srcPortFirst, srcPortLast);
+        filterForwardChainRule.setRuleTag(this.ruleTag);
+        return filterForwardChainRule;
     }
 
     @Override
@@ -356,22 +368,62 @@ public class PortForwardRule {
         this.sourcePortRange = sourcePortRange;
     }
 
+    public String getRuleTag() {
+        return this.ruleTag;
+    }
+
+    public void setRuleTag(String ruleTag) {
+        this.ruleTag = ruleTag;
+    }
+
+    public void setRuleTag(int ruleNumber) {
+        StringBuilder sb = new StringBuilder(RULE_TAG);
+        sb.append(ruleNumber);
+        this.ruleTag = sb.toString();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof PortForwardRule)) {
             return false;
         }
-
         PortForwardRule other = (PortForwardRule) o;
 
-        return compareObjects(this.inboundIface, other.inboundIface)
-                && compareObjects(this.outboundIface, other.outboundIface)
-                && compareObjects(this.address, other.address) && compareObjects(this.protocol, other.protocol)
-                && this.inPort == other.inPort && this.outPort == other.outPort && this.masquerade == other.masquerade
-                && compareObjects(this.permittedNetwork, other.permittedNetwork)
-                && this.permittedNetworkMask == other.permittedNetworkMask
-                && compareObjects(this.permittedMAC, other.permittedMAC)
-                && compareObjects(this.sourcePortRange, other.sourcePortRange);
+        if (!compareObjects(this.inboundIface, other.inboundIface)) {
+            return false;
+        }
+        if (!compareObjects(this.outboundIface, other.outboundIface)) {
+            return false;
+        }
+        if (!compareObjects(this.address, other.address)) {
+            return false;
+        }
+        if (!compareObjects(this.protocol, other.protocol)) {
+            return false;
+        }
+        if (this.inPort != other.inPort) {
+            return false;
+        }
+        if (this.outPort != other.outPort) {
+            return false;
+        }
+        if (this.masquerade != other.masquerade) {
+            return false;
+        }
+        if (!compareObjects(this.permittedNetwork, other.permittedNetwork)) {
+            return false;
+        }
+        if (this.permittedNetworkMask != other.permittedNetworkMask) {
+            return false;
+        }
+        if (!compareObjects(this.permittedMAC, other.permittedMAC)) {
+            return false;
+        }
+        if (!compareObjects(this.sourcePortRange, other.sourcePortRange)) {
+            return false;
+        }
+
+        return true;
     }
 
     private boolean compareObjects(Object obj1, Object obj2) {

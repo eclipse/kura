@@ -141,9 +141,7 @@ public class FirewallAutoNatConfigTest {
 
         NetworkConfiguration config = prepareNetworkConfiguration(intfName, destinationInterface, true, false);
 
-        LinkedHashSet<NATRule> natConfigs = (LinkedHashSet<NATRule>) TestUtil.invokePrivate(writer, "getNatConfigs",
-                config);
-
+        Set<NATRule> natConfigs = (Set<NATRule>) TestUtil.invokePrivate(writer, "getNatConfigs", config);
         assertNotNull(natConfigs);
         assertEquals(1, natConfigs.size());
         NATRule natRule = natConfigs.iterator().next();

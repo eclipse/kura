@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2017 Eurotech and/or its affiliates
+ * Copyright (c) 2011, 2018 Eurotech and/or its affiliates
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -25,12 +25,15 @@ public class NATRule {
 
     private static final Logger logger = LoggerFactory.getLogger(NATRule.class);
 
+    protected static final String RULE_TAG = "nat";
+
     private String sourceInterface;						// i.e. eth0
     private String destinationInterface;				// i.e. ppp0
     private String protocol;	// protocol (i.e. all, tcp, udp)
     private String source; // source network/host (i.e. 192.168.1.0/24 or 192.168.1.1/32)
     private String destination; // destination network/host (i.e. 192.168.1.0/24 or 192.168.1.1/32)
     private boolean masquerade;
+    private String ruleTag;
 
     /**
      * Constructor of <code>NATRule</code> object.
@@ -168,20 +171,36 @@ public class NATRule {
         return this.masquerade;
     }
 
+    public String getRuleTag() {
+        return this.ruleTag;
+    }
+
+    public void setRuleTag(String ruleTag) {
+        this.ruleTag = ruleTag;
+    }
+
+    public void setRuleTag(int ruleNumber) {
+        StringBuilder sb = new StringBuilder(RULE_TAG);
+        sb.append(ruleNumber);
+        this.ruleTag = sb.toString();
+    }
+
     public NatPostroutingChainRule getNatPostroutingChainRule() {
-        NatPostroutingChainRule ret;
+        NatPostroutingChainRule natPostroutingChainRule;
         if (this.protocol == null) {
-            ret = new NatPostroutingChainRule(this.destinationInterface, this.masquerade);
+            natPostroutingChainRule = new NatPostroutingChainRule(this.destinationInterface, this.masquerade);
+            natPostroutingChainRule.setRuleTag(this.ruleTag);
         } else {
             try {
-                ret = new NatPostroutingChainRule(this.destinationInterface, this.protocol, this.destination,
-                        this.source, this.masquerade);
+                natPostroutingChainRule = new NatPostroutingChainRule(this.destinationInterface, this.protocol,
+                        this.destination, this.source, this.masquerade);
+                natPostroutingChainRule.setRuleTag(this.ruleTag);
             } catch (KuraException e) {
-                ret = null;
+                natPostroutingChainRule = null;
                 logger.error("failed to obtain NatPostroutingChainRule", e);
             }
         }
-        return ret;
+        return natPostroutingChainRule;
     }
 
     public FilterForwardChainRule getFilterForwardChainRule() {
@@ -197,8 +216,11 @@ public class NATRule {
             dstNetwork = this.destination.split("/")[0];
             dstMask = Short.parseShort(this.destination.split("/")[1]);
         }
-        return new FilterForwardChainRule(this.sourceInterface, this.destinationInterface, srcNetwork, srcMask,
-                dstNetwork, dstMask, this.protocol, null, 0, 0);
+
+        FilterForwardChainRule filterForwardChainRule = new FilterForwardChainRule(this.sourceInterface,
+                this.destinationInterface, srcNetwork, srcMask, dstNetwork, dstMask, this.protocol, null, 0, 0);
+        filterForwardChainRule.setRuleTag(this.ruleTag);
+        return filterForwardChainRule;
     }
 
     @Override
@@ -228,10 +250,25 @@ public class NATRule {
         }
         NATRule other = (NATRule) o;
 
-        return compareObjects(this.sourceInterface, other.sourceInterface)
-                && compareObjects(this.destinationInterface, other.destinationInterface)
-                && this.masquerade == other.masquerade && compareObjects(this.protocol, other.protocol)
-                && compareObjects(this.source, other.source) && compareObjects(this.destination, other.destination);
+        if (!compareObjects(this.sourceInterface, other.sourceInterface)) {
+            return false;
+        }
+        if (!compareObjects(this.destinationInterface, other.destinationInterface)) {
+            return false;
+        }
+        if (this.masquerade != other.masquerade) {
+            return false;
+        }
+        if (!compareObjects(this.protocol, other.protocol)) {
+            return false;
+        }
+        if (!compareObjects(this.source, other.source)) {
+            return false;
+        }
+        if (!compareObjects(this.destination, other.destination)) {
+            return false;
+        }
+        return true;
     }
 
     private boolean compareObjects(Object obj1, Object obj2) {

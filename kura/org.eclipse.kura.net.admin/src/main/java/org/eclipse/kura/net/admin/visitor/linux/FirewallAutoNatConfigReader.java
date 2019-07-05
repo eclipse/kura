@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 public class FirewallAutoNatConfigReader implements NetworkConfigurationVisitor {
 
     private static final Logger logger = LoggerFactory.getLogger(FirewallAutoNatConfigReader.class);
+    private static final String NET_INTERFACE_STR = "net.interface.";
 
     private static FirewallAutoNatConfigReader instance;
 
@@ -59,8 +60,7 @@ public class FirewallAutoNatConfigReader implements NetworkConfigurationVisitor 
 
     protected Set<NATRule> getAutoNatRules() throws KuraException {
         LinuxFirewall firewall = LinuxFirewall.getInstance();
-        Set<NATRule> natRules = firewall.getAutoNatRules();
-        return natRules;
+        return firewall.getAutoNatRules();
     }
 
     protected Properties getKuranetProperties() {
@@ -93,34 +93,34 @@ public class FirewallAutoNatConfigReader implements NetworkConfigurationVisitor 
         String srcIface = null;
         String dstIface = null;
         String prop;
-        StringBuilder sb = new StringBuilder().append("net.interface.").append(interfaceName)
+        StringBuilder sb = new StringBuilder().append(NET_INTERFACE_STR).append(interfaceName)
                 .append(".config.nat.enabled");
         if ((prop = kuraProps.getProperty(sb.toString())) != null) {
             natEnabled = Boolean.parseBoolean(prop);
         }
 
-        sb = new StringBuilder().append("net.interface.").append(interfaceName).append(".config.nat.masquerade");
+        sb = new StringBuilder().append(NET_INTERFACE_STR).append(interfaceName).append(".config.nat.masquerade");
         if ((prop = kuraProps.getProperty(sb.toString())) != null) {
             useMasquerade = Boolean.parseBoolean(prop);
         }
 
-        sb = new StringBuilder().append("net.interface.").append(interfaceName).append(".config.nat.src.interface");
+        sb = new StringBuilder().append(NET_INTERFACE_STR).append(interfaceName).append(".config.nat.src.interface");
         if ((prop = kuraProps.getProperty(sb.toString())) != null) {
             srcIface = prop;
         }
 
-        sb = new StringBuilder().append("net.interface.").append(interfaceName).append(".config.nat.dst.interface");
+        sb = new StringBuilder().append(NET_INTERFACE_STR).append(interfaceName).append(".config.nat.dst.interface");
         if ((prop = kuraProps.getProperty(sb.toString())) != null) {
             dstIface = prop;
         }
 
         if (natEnabled) {
-            addNatConfig(netInterfaceConfig, interfaceName, srcIface, dstIface, useMasquerade);
+            addNatConfig(netInterfaceConfig, srcIface, dstIface, useMasquerade);
         }
     }
 
     private void addNatConfig(NetInterfaceConfig<? extends NetInterfaceAddressConfig> netInterfaceConfig,
-            String interfaceName, String srcIface, String dstIface, boolean useMasquerade) throws KuraException {
+            String srcIface, String dstIface, boolean useMasquerade) throws KuraException {
 
         FirewallAutoNatConfig natConfig = new FirewallAutoNatConfig(srcIface, dstIface, useMasquerade);
         NetInterfaceAddressConfig netInterfaceAddressConfig = ((AbstractNetInterface<?>) netInterfaceConfig)
@@ -153,8 +153,8 @@ public class FirewallAutoNatConfigReader implements NetworkConfigurationVisitor 
                 if (rule.getSourceInterface().equals(interfaceName)) {
                     logger.debug("found NAT rule: {}", rule);
 
-                    addNatConfig(netInterfaceConfig, interfaceName, rule.getSourceInterface(),
-                            rule.getDestinationInterface(), rule.isMasquerade());
+                    addNatConfig(netInterfaceConfig, rule.getSourceInterface(), rule.getDestinationInterface(),
+                            rule.isMasquerade());
                 }
             }
         }

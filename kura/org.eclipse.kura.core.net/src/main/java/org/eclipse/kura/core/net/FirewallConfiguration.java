@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2017 Eurotech and/or its affiliates and others
+ * Copyright (c) 2016, 2018 Eurotech and/or its affiliates and others
  *
  *   All rights reserved. This program and the accompanying materials
  *   are made available under the terms of the Eclipse Public License v1.0
@@ -234,10 +234,18 @@ public class FirewallConfiguration {
     }
 
     public List<FirewallPortForwardConfigIP<? extends IPAddress>> getPortForwardConfigs() {
+        int ruleNumber = 0;
+        for (FirewallPortForwardConfigIP<? extends IPAddress> firewallPortForwardConfigIP : this.portForwardConfigs) {
+            firewallPortForwardConfigIP.setRuleNumber(++ruleNumber);
+        }
         return this.portForwardConfigs;
     }
 
     public List<FirewallNatConfig> getNatConfigs() {
+        int ruleNumber = 0;
+        for (FirewallNatConfig firewallNatConfig : this.natConfigs) {
+            firewallNatConfig.setRuleNumber(++ruleNumber);
+        }
         return this.natConfigs;
     }
 

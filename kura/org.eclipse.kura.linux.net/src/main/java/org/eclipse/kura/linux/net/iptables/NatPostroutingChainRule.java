@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2017 Eurotech and/or its affiliates
+ * Copyright (c) 2011, 2018 Eurotech and/or its affiliates
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -12,6 +12,9 @@
 
 package org.eclipse.kura.linux.net.iptables;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.kura.KuraErrorCode;
 import org.eclipse.kura.KuraException;
 import org.slf4j.Logger;
@@ -20,6 +23,7 @@ import org.slf4j.LoggerFactory;
 public class NatPostroutingChainRule {
 
     private static final Logger logger = LoggerFactory.getLogger(NatPostroutingChainRule.class);
+    private static final String ZERO_IPV4_ADDRESS = "0.0.0.0";
 
     private String rule;
     private String dstNetwork;
@@ -29,6 +33,7 @@ public class NatPostroutingChainRule {
     private String dstInterface;
     private String protocol;
     private boolean masquerade;
+    private String ruleTag;
 
     public NatPostroutingChainRule(String dstNetwork, short dstMask, String srcNetwork, short srcMask,
             String dstInterface, String protocol, boolean masquerade) {
@@ -39,6 +44,7 @@ public class NatPostroutingChainRule {
         this.dstInterface = dstInterface;
         this.protocol = protocol;
         this.masquerade = masquerade;
+        this.ruleTag = "";
     }
 
     public NatPostroutingChainRule(String dstInterface, boolean masquerade) {
@@ -50,6 +56,7 @@ public class NatPostroutingChainRule {
             sbRule.append(" -j MASQUERADE");
         }
         this.rule = sbRule.toString();
+        this.ruleTag = "";
     }
 
     public NatPostroutingChainRule(String dstInterface, String protocol, String dstNetwork, String srcNetwork,
@@ -87,15 +94,18 @@ public class NatPostroutingChainRule {
                 sbRule.append(" -j MASQUERADE");
             }
             this.rule = sbRule.toString();
+            this.ruleTag = "";
         } catch (Exception e) {
-            throw new KuraException(KuraErrorCode.INTERNAL_ERROR, e);
+            throw new KuraException(KuraErrorCode.CONFIGURATION_ERROR, e);
         }
     }
 
     public NatPostroutingChainRule(String rule) throws KuraException {
+        this.ruleTag = "";
         try {
             String[] aRuleTokens = rule.split(" ");
-            for (int i = 0; i < aRuleTokens.length; i++) {
+            int i = 0;
+            while (i < aRuleTokens.length) {
                 if ("-o".equals(aRuleTokens[i])) {
                     this.dstInterface = aRuleTokens[++i];
                 } else if ("-p".equals(aRuleTokens[i])) {
@@ -110,11 +120,14 @@ public class NatPostroutingChainRule {
                     if ("MASQUERADE".equals(aRuleTokens[++i])) {
                         this.masquerade = true;
                     }
+                } else if ("--comment".equals(aRuleTokens[i])) {
+                    this.ruleTag = aRuleTokens[++i];
                 }
+                i++;
             }
             this.rule = new StringBuilder("iptables -t nat ").append(rule).toString();
         } catch (Exception e) {
-            throw new KuraException(KuraErrorCode.INTERNAL_ERROR, e);
+            throw new KuraException(KuraErrorCode.CONFIGURATION_ERROR, e);
         }
     }
 
@@ -123,7 +136,7 @@ public class NatPostroutingChainRule {
         StringBuilder sb = new StringBuilder();
         if (this.masquerade) {
             sb.append("-A POSTROUTING");
-            if (this.srcNetwork != null && !this.srcNetwork.equals("0.0.0.0")) {
+            if (this.srcNetwork != null && !ZERO_IPV4_ADDRESS.equals(this.srcNetwork)) {
                 sb.append(" -s ").append(this.srcNetwork).append('/').append(this.srcMask);
             }
             if (this.dstNetwork != null) {
@@ -135,6 +148,9 @@ public class NatPostroutingChainRule {
                 sb.append(" -p ").append(this.protocol);
             }
             sb.append(" -j MASQUERADE");
+            if (this.ruleTag != null) {
+                sb.append(" -m comment --comment \"").append(this.ruleTag).append('"');
+            }
         }
         return sb.toString();
     }
@@ -170,11 +186,31 @@ public class NatPostroutingChainRule {
             return false;
         }
 
-        return compareObjects(this.rule, other.rule) && compareObjects(this.dstNetwork, other.dstNetwork)
-                && this.dstMask == other.dstMask && compareObjects(this.srcNetwork, other.srcNetwork)
-                && this.srcMask == other.srcMask && compareObjects(this.dstInterface, other.dstInterface)
-                && compareObjects(this.protocol, other.protocol) && this.masquerade == other.masquerade;
-
+        if (!compareObjects(this.rule, other.rule)) {
+            return false;
+        }
+        if (!compareObjects(this.dstNetwork, other.dstNetwork)) {
+            return false;
+        }
+        if (this.dstMask != other.dstMask) {
+            return false;
+        }
+        if (!compareObjects(this.srcNetwork, other.srcNetwork)) {
+            return false;
+        }
+        if (this.srcMask != other.srcMask) {
+            return false;
+        }
+        if (!compareObjects(this.dstInterface, other.dstInterface)) {
+            return false;
+        }
+        if (!compareObjects(this.protocol, other.protocol)) {
+            return false;
+        }
+        if (this.masquerade != other.masquerade) {
+            return false;
+        }
+        return true;
     }
 
     private boolean compareObjects(Object obj1, Object obj2) {
@@ -186,11 +222,7 @@ public class NatPostroutingChainRule {
         return true;
     }
 
-    public boolean isMatchingForwardChainRule(FilterForwardChainRule forwardChainRule) {
-        if (forwardChainRule.getState() != null) {
-            // ignore 'inbound' forward rule
-            return false;
-        }
+    private boolean isMatchingForwardChainRule(FilterForwardChainRule forwardChainRule) {
         if (!this.dstInterface.equals(forwardChainRule.getOutputInterface())) {
             return false;
         }
@@ -230,6 +262,37 @@ public class NatPostroutingChainRule {
         return true;
     }
 
+    public PostRoutingRuleType getRuleType() {
+        if (this.ruleTag.startsWith(NATRule.RULE_TAG)) {
+            return PostRoutingRuleType.NAT;
+        } else if (this.ruleTag.startsWith(PortForwardRule.RULE_TAG)) {
+            return PostRoutingRuleType.PF;
+        }
+        if (this.protocol == null) {
+            return PostRoutingRuleType.ANAT;
+
+        } else {
+            return PostRoutingRuleType.UNKNOWN;
+        }
+    }
+
+    public List<FilterForwardChainRule> getMatchingForwardChainRules(List<FilterForwardChainRule> filterForwardChain) {
+        List<FilterForwardChainRule> matchingForwardChainRules = new ArrayList<>();
+        for (FilterForwardChainRule filterForwardChainRule : filterForwardChain) {
+            if (this.ruleTag.equals(filterForwardChainRule.getRuleTag())) {
+                matchingForwardChainRules.add(filterForwardChainRule);
+            }
+        }
+        if (matchingForwardChainRules.isEmpty()) {
+            for (FilterForwardChainRule filterForwardChainRule : filterForwardChain) {
+                if (isMatchingForwardChainRule(filterForwardChainRule)) {
+                    matchingForwardChainRules.add(filterForwardChainRule);
+                }
+            }
+        }
+        return matchingForwardChainRules;
+    }
+
     public String getDstNetwork() {
         return this.dstNetwork;
     }
@@ -257,4 +320,13 @@ public class NatPostroutingChainRule {
     public boolean isMasquerade() {
         return this.masquerade;
     }
+
+    public String getRuleTag() {
+        return this.ruleTag;
+    }
+
+    public void setRuleTag(String ruleTag) {
+        this.ruleTag = ruleTag;
+    }
+
 }
