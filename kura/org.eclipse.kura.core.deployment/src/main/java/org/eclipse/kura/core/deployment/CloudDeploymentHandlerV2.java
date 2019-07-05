@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -44,6 +45,7 @@ import org.eclipse.kura.core.deployment.download.impl.DownloadImpl;
 import org.eclipse.kura.core.deployment.hook.DeploymentHookManager;
 import org.eclipse.kura.core.deployment.install.DeploymentPackageInstallOptions;
 import org.eclipse.kura.core.deployment.install.InstallImpl;
+import org.eclipse.kura.core.deployment.request.PersistedRequestServiceImpl;
 import org.eclipse.kura.core.deployment.uninstall.DeploymentPackageUninstallOptions;
 import org.eclipse.kura.core.deployment.uninstall.UninstallImpl;
 import org.eclipse.kura.core.deployment.xml.XmlBundle;
@@ -53,6 +55,9 @@ import org.eclipse.kura.core.deployment.xml.XmlDeploymentPackage;
 import org.eclipse.kura.core.deployment.xml.XmlDeploymentPackages;
 import org.eclipse.kura.data.DataTransportService;
 import org.eclipse.kura.deployment.hook.DeploymentHook;
+import org.eclipse.kura.deployment.hook.PersistedRequestService;
+import org.eclipse.kura.deployment.hook.Request;
+import org.eclipse.kura.deployment.hook.RequestEventStream;
 import org.eclipse.kura.marshalling.Marshaller;
 import org.eclipse.kura.message.KuraPayload;
 import org.eclipse.kura.message.KuraResponsePayload;
@@ -75,7 +80,7 @@ import org.osgi.util.tracker.ServiceTrackerCustomizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CloudDeploymentHandlerV2 implements ConfigurableComponent, RequestHandler {
+public class CloudDeploymentHandlerV2 implements ConfigurableComponent, RequestHandler, PersistedRequestService {
 
     private final class CloudNotificationPublisherTrackerCustomizer
             implements ServiceTrackerCustomizer<CloudNotificationPublisher, CloudNotificationPublisher> {
@@ -85,8 +90,12 @@ public class CloudDeploymentHandlerV2 implements ConfigurableComponent, RequestH
             CloudDeploymentHandlerV2.this.cloudNotificationPublisher = CloudDeploymentHandlerV2.this.bundleContext
                     .getService(reference);
             String notificationPublisherPid = (String) reference.getProperty("kura.service.pid");
+            CloudDeploymentHandlerV2.this.cloudNotificationPublisherPid = notificationPublisherPid;
 
             installImplementation.sendInstallConfirmations(notificationPublisherPid,
+                    CloudDeploymentHandlerV2.this.cloudNotificationPublisher);
+
+            persistedRequestServiceImpl.addNotificationPublisher(notificationPublisherPid,
                     CloudDeploymentHandlerV2.this.cloudNotificationPublisher);
 
             return CloudDeploymentHandlerV2.this.cloudNotificationPublisher;
@@ -101,6 +110,9 @@ public class CloudDeploymentHandlerV2 implements ConfigurableComponent, RequestH
         @Override
         public void removedService(final ServiceReference<CloudNotificationPublisher> reference,
                 final CloudNotificationPublisher service) {
+            String notificationPublisherPid = (String) reference.getProperty("kura.service.pid");
+
+            persistedRequestServiceImpl.removeNotificationPublisher(notificationPublisherPid);
             CloudDeploymentHandlerV2.this.cloudNotificationPublisher = null;
         }
     }
@@ -158,11 +170,14 @@ public class CloudDeploymentHandlerV2 implements ConfigurableComponent, RequestH
     private String pendingUninstPackageName;
     private String installVerificationDir;
 
+    private String cloudNotificationPublisherPid;
     private CloudNotificationPublisher cloudNotificationPublisher;
 
     private ServiceTrackerCustomizer<CloudNotificationPublisher, CloudNotificationPublisher> cloudPublisherTrackerCustomizer;
 
     private ServiceTracker<CloudNotificationPublisher, CloudNotificationPublisher> cloudPublisherTracker;
+
+    private final PersistedRequestServiceImpl persistedRequestServiceImpl = new PersistedRequestServiceImpl();
 
     // ----------------------------------------------------------------
     //
@@ -250,6 +265,8 @@ public class CloudDeploymentHandlerV2 implements ConfigurableComponent, RequestH
 
         this.cloudPublisherTrackerCustomizer = new CloudNotificationPublisherTrackerCustomizer();
         initCloudPublisherTracking();
+
+        persistedRequestServiceImpl.activate(properties);
 
         updated(properties);
     }
@@ -483,7 +500,8 @@ public class CloudDeploymentHandlerV2 implements ConfigurableComponent, RequestH
         final DeploymentPackageDownloadOptions options;
         try {
             options = new DeploymentPackageDownloadOptions(request, this.deploymentHookManager,
-                    this.componentOptions.getDownloadsDirectory());
+                    this.componentOptions.getDownloadsDirectory(), persistedRequestServiceImpl,
+                    cloudNotificationPublisherPid, cloudNotificationPublisher);
             options.setClientId(this.dataTransportService.getClientId());
         } catch (Exception ex) {
             logger.info("Malformed download request!");
@@ -593,7 +611,8 @@ public class CloudDeploymentHandlerV2 implements ConfigurableComponent, RequestH
         final DeploymentPackageInstallOptions options;
         try {
             options = new DeploymentPackageInstallOptions(request, this.deploymentHookManager,
-                    this.componentOptions.getDownloadsDirectory());
+                    this.componentOptions.getDownloadsDirectory(), persistedRequestServiceImpl,
+                    cloudNotificationPublisherPid, cloudNotificationPublisher);
             options.setClientId(this.dataTransportService.getClientId());
         } catch (Exception ex) {
             logger.error("Malformed install request!");
@@ -947,5 +966,25 @@ public class CloudDeploymentHandlerV2 implements ConfigurableComponent, RequestH
             ungetServiceReferences(marshallerSRs);
         }
         return result;
+    }
+
+    @Override
+    public Optional<Request> getRequest(String id) {
+        return persistedRequestServiceImpl.getRequest(id);
+    }
+
+    @Override
+    public List<Request> getRequests() {
+        return persistedRequestServiceImpl.getRequests();
+    }
+
+    @Override
+    public void registerEventStream(RequestEventStream stream) {
+        persistedRequestServiceImpl.registerEventStream(stream);
+    }
+
+    @Override
+    public void unregisterEventStream(RequestEventStream stream) {
+        persistedRequestServiceImpl.unregisterEventStream(stream);
     }
 }

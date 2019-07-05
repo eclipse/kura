@@ -22,9 +22,11 @@ import java.util.stream.Collectors;
 import org.eclipse.kura.KuraErrorCode;
 import org.eclipse.kura.KuraException;
 import org.eclipse.kura.KuraInvalidMessageException;
+import org.eclipse.kura.cloudconnection.publisher.CloudNotificationPublisher;
 import org.eclipse.kura.core.deployment.DeploymentPackageOptions;
 import org.eclipse.kura.core.deployment.download.DownloadFileUtilities;
 import org.eclipse.kura.core.deployment.hook.DeploymentHookManager;
+import org.eclipse.kura.core.deployment.request.PersistedRequestServiceImpl;
 import org.eclipse.kura.deployment.hook.DeploymentHook;
 import org.eclipse.kura.deployment.hook.RequestContext;
 import org.eclipse.kura.message.KuraPayload;
@@ -51,10 +53,14 @@ public class DeploymentPackageInstallOptions extends DeploymentPackageOptions {
     }
 
     public DeploymentPackageInstallOptions(KuraPayload request, DeploymentHookManager hookManager,
-            String downloadDirectory) throws KuraException {
+            String downloadDirectory, PersistedRequestServiceImpl persistedRequestService,
+            final String notificationPublisherPid, final CloudNotificationPublisher notificationPublisher)
+            throws KuraException {
         super(null, null);
 
         setDownloadDirectory(downloadDirectory);
+        setNotificationPublisherPid(notificationPublisherPid);
+        setNotificationPublisher(notificationPublisher);
 
         super.setDpName((String) request.getMetric(METRIC_DP_NAME));
         if (super.getDpName() == null) {
@@ -99,7 +105,7 @@ public class DeploymentPackageInstallOptions extends DeploymentPackageOptions {
                 setVerifierURI((String) metric);
             }
 
-            parseHookRelatedOptions(request, hookManager);
+            parseHookRelatedOptions(request, hookManager, persistedRequestService);
 
         } catch (Exception ex) {
             throw new KuraException(KuraErrorCode.INTERNAL_ERROR, ex);
@@ -162,13 +168,14 @@ public class DeploymentPackageInstallOptions extends DeploymentPackageOptions {
         return hookRequestContext;
     }
 
-    protected void parseHookRelatedOptions(KuraPayload request, DeploymentHookManager hookManager) throws IOException {
+    protected void parseHookRelatedOptions(KuraPayload request, DeploymentHookManager hookManager,
+            PersistedRequestServiceImpl persistedRequestServiceImpl) throws IOException {
         Object metric = request.getMetric(METRIC_REQUEST_TYPE);
         if (metric != null) {
             setRequestType((String) metric);
             setDeploymentHook(hookManager.getHook(requestType));
-            setHookRequestContext(
-                    new RequestContext(DownloadFileUtilities.getDpDownloadFile(this).getAbsolutePath(), requestType));
+            setHookRequestContext(new RequestContext(DownloadFileUtilities.getDpDownloadFile(this).getAbsolutePath(),
+                    requestType, persistedRequestServiceImpl.getRequest(this)));
         } else {
             setDeploymentHook(null);
         }

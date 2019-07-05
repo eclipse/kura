@@ -25,6 +25,8 @@ public class KuraInstallPayload extends KuraPayload {
     public static final String METRIC_DP_NAME = "dp.name";
     public static final String METRIC_DP_VERSION = "dp.version";
     public static final String METRIC_JOB_ID = "job.id";
+    public static final String METRIC_NOTIFICATION = "dp.notification";
+
     private static final String METRIC_ERROR_MESSAGE = "dp.install.error.message";
 
     public KuraInstallPayload(String clientId) {
@@ -96,6 +98,14 @@ public class KuraInstallPayload extends KuraPayload {
 
     public String getErrorMessage() {
         return (String) getMetric(METRIC_ERROR_MESSAGE);
+    }
+
+    public void setNotificationMessage(final String notificationMessage) {
+        addMetric(METRIC_NOTIFICATION, notificationMessage);
+    }
+
+    public String getNotificationMessage() {
+        return (String) getMetric(METRIC_NOTIFICATION);
     }
 
 }

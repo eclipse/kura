@@ -97,7 +97,7 @@ public interface DeploymentHook {
     public void preDownload(RequestContext context, Map<String, Object> properties) throws KuraException;
 
     /**
-     * This method is called at the {@code preDownload} phase, see class description for more details.
+     * This method is called at the {@code postDownload} phase, see class description for more details.
      * 
      * @param context
      *            a {@link RequestContext} instance representing the current DEPLOY-V2 request
@@ -109,7 +109,7 @@ public interface DeploymentHook {
     public void postDownload(RequestContext context, Map<String, Object> properties) throws KuraException;
 
     /**
-     * This method is called at the {@code preDownload} phase, see class description for more details.
+     * This method is called at the {@code postInstall} phase, see class description for more details.
      * 
      * @param context
      *            a {@link RequestContext} instance representing the current DEPLOY-V2 request

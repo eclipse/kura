@@ -15,8 +15,10 @@ package org.eclipse.kura.core.deployment.download;
 import org.eclipse.kura.KuraErrorCode;
 import org.eclipse.kura.KuraException;
 import org.eclipse.kura.KuraInvalidMessageException;
+import org.eclipse.kura.cloudconnection.publisher.CloudNotificationPublisher;
 import org.eclipse.kura.core.deployment.hook.DeploymentHookManager;
 import org.eclipse.kura.core.deployment.install.DeploymentPackageInstallOptions;
+import org.eclipse.kura.core.deployment.request.PersistedRequestServiceImpl;
 import org.eclipse.kura.message.KuraPayload;
 import org.eclipse.kura.message.KuraRequestPayload;
 
@@ -55,10 +57,14 @@ public class DeploymentPackageDownloadOptions extends DeploymentPackageInstallOp
     }
 
     public DeploymentPackageDownloadOptions(KuraPayload request, DeploymentHookManager hookManager,
-            String downloadDirectory) throws KuraException {
+            String downloadDirectory, PersistedRequestServiceImpl persistedRequestService,
+            final String notificationPublisherPid, final CloudNotificationPublisher notificationPublisher)
+            throws KuraException {
         super((String) null, (String) null);
 
         setDownloadDirectory(downloadDirectory);
+        setNotificationPublisherPid(notificationPublisherPid);
+        setNotificationPublisher(notificationPublisher);
 
         setDeployUri((String) request.getMetric(METRIC_DP_DOWNLOAD_URI));
         if (getDeployUri() == null) {
@@ -154,7 +160,7 @@ public class DeploymentPackageDownloadOptions extends DeploymentPackageInstallOp
                 super.setVerifierURI((String) metric);
             }
 
-            parseHookRelatedOptions(request, hookManager);
+            parseHookRelatedOptions(request, hookManager, persistedRequestService);
 
         } catch (Exception ex) {
             throw new KuraException(KuraErrorCode.INTERNAL_ERROR, ex);

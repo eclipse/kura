@@ -45,5 +45,7 @@
    <reference bind="setDeploymentHookManager" cardinality="1..1" interface="org.eclipse.kura.core.deployment.hook.DeploymentHookManager" name="DeploymentHookManager" policy="static" unbind="unsetDeploymentHookManager"/>
    <service>
       <provide interface="org.eclipse.kura.configuration.ConfigurableComponent"/>
+      <provide interface="org.eclipse.kura.deployment.hook.PersistedRequestService"/>
    </service>
+   <property name="persisted.request.root" type="String" value="/var/lib/eth-persisted-requests"/>
 </scr:component>
