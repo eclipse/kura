@@ -45,7 +45,10 @@ public class NetInterfaceConfigSerializationServiceImpl implements NetInterfaceC
     private static final Logger logger = LoggerFactory.getLogger(NetInterfaceConfigSerializationServiceImpl.class);
 
     private static final String DEBIAN_NET_CONFIGURATION_FILE = "/etc/network/interfaces";
-    private static final String DEBIAN_TMP_NET_CONFIGURATION_FILE = "/etc/network/interfaces.tmp";
+    private static final String DEBIAN_TMP_NET_CONFIGURATION_FILE =
+                         System.getProperty("kura.data.snap.common") == null ?
+                               "/etc/network/interfaces.tmp"
+                             : "/tmp/network_interfaces.tmp";
 
     private static final String ONBOOT_PROP_NAME = "ONBOOT";
     private static final String BOOTPROTO_PROP_NAME = "BOOTPROTO";

@@ -49,7 +49,9 @@ public class HostapdConfigWriter implements NetworkConfigurationVisitor {
 
     private static final String HEXES = "0123456789ABCDEF";
 
-    private static final String HOSTAPD_TMP_CONFIG_FILE = "/etc/hostapd.conf.tmp";
+    private static final String HOSTAPD_TMP_CONFIG_FILE = (System.getProperty("kura.data.snap.common") == null ?
+                  "/etc/hostapd.conf.tmp"
+                : System.getProperty("kura.data.snap.common") + "/etc/hostapd.conf.tmp" );
 
     private static HostapdConfigWriter instance;
 

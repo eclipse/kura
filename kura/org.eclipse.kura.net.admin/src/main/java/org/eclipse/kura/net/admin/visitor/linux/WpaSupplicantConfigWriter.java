@@ -50,7 +50,9 @@ public class WpaSupplicantConfigWriter implements NetworkConfigurationVisitor {
 
     private static final Logger logger = LoggerFactory.getLogger(WpaSupplicantConfigWriter.class);
 
-    private static final String WPA_TMP_CONFIG_FILE = "/etc/wpa_supplicant.conf.tmp";
+    private static final String WPA_TMP_CONFIG_FILE = (System.getProperty("kura.data.snap.common") == null ?
+                  "/etc/wpa_supplicant.conf.tmp"
+                : System.getProperty("kura.data.snap.common") + "/etc/wpa_supplicant.conf.tmp");
     private static final String TMP_WPA_CONFIG_FILE = "/tmp/wpa_supplicant.conf";
     private static final String WPA_SUPPLICANT_CONF_RESOURCE = "/src/main/resources/wifi/wpasupplicant.conf";
 

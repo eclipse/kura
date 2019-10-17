@@ -103,7 +103,12 @@ public class HostapdManager {
     public static String getHostapdConfigFileName(String ifaceName) {
         StringBuilder sb = new StringBuilder();
 
-        sb.append("/etc/hostapd-").append(ifaceName).append(".conf");
+        String snapCommon = System.getProperty("kura.data.snap.common");
+        if (snapCommon == null) {
+            sb.append("/etc/hostapd-").append(ifaceName).append(".conf");
+        } else {
+            sb.append(snapCommon + "/etc/hostapd/hostapd-").append(ifaceName).append(".conf");
+        }
 
         return sb.toString();
     }

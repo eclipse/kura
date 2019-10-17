@@ -41,7 +41,9 @@ public class LinuxDns {
 
     private static final String DNS_FILE_NAME = "/etc/resolv.conf";
     private static final String[] PPP_DNS_FILES = { "/var/run/ppp/resolv.conf", "/etc/ppp/resolv.conf" };
-    private static final String BACKUP_DNS_FILE_NAME = "/etc/resolv.conf.save";
+    private static final String BACKUP_DNS_FILE_NAME = (System.getProperty("kura.data.snap.common") == null ?
+                      "/etc/resolv.conf.save"
+                    : System.getProperty("kura.data.snap.common") + "/etc/resolv.conf.save");
 
     private static final String NAMESERVER = "nameserver";
 

@@ -149,8 +149,12 @@ public class WpaSupplicantManager {
 
     public static String getWpaSupplicantConfigFilename(String ifaceName) {
         StringBuilder sb = new StringBuilder();
-
-        sb.append("/etc/wpa_supplicant-").append(ifaceName).append(".conf");
+        String snapCommon = System.getProperty("kura.data.snap.common");
+        if (snapCommon == null) {
+            sb.append("/etc/wpa_supplicant-").append(ifaceName).append(".conf");
+        } else {
+            sb.append(snapCommon + "/etc/wpa_supplicant/wpa_supplicant-").append(ifaceName).append(".conf");
+        }
 
         return sb.toString();
     }
