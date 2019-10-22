@@ -46,4 +46,5 @@
    <service>
       <provide interface="org.eclipse.kura.configuration.ConfigurableComponent"/>
    </service>
+   <reference bind="setDownloadService" cardinality="1..1" interface="org.eclipse.kura.download.DownloadService" name="DownloadService" policy="static" unbind="unsetDownloadService"/>
 </scr:component>

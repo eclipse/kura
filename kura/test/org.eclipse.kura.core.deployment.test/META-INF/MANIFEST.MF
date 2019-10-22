@@ -6,11 +6,15 @@ Bundle-Version: 4.2.0.qualifier
 Bundle-Vendor: Eclipse Kura
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Fragment-Host: org.eclipse.kura.core.deployment
-Import-Package: org.eclipse.kura;version="[1.2,2.0)",
+Import-Package: javax.servlet;version="3.1.0",
+ javax.servlet.http;version="3.1.0",
+ org.eclipse.kura;version="[1.2,2.0)",
  org.eclipse.kura.core.deployment.hook;version="[1.0,2.0)",
  org.eclipse.kura.core.deployment.install;version="[1.0,2.0)",
+ org.eclipse.kura.core.deployment.download;version="[2.0,3.0)",
  org.eclipse.kura.core.testutil;version="1.0.0",
  org.eclipse.kura.data;version="1.1.2",
+ org.eclipse.kura.download;version="[1.0,2.0)",
  org.eclipse.kura.system;version="[1.1,2.0)",
  org.junit;version="4.12.0",
  org.junit.runner;version="4.12.0",
@@ -20,5 +24,6 @@ Import-Package: org.eclipse.kura;version="[1.2,2.0)",
  org.mockito.stubbing;version="1.10.19",
  org.osgi.framework;version="1.7",
  org.osgi.service.cm;version="1.4",
- org.osgi.service.component;version="1.2"
+ org.osgi.service.component;version="1.2",
+ org.osgi.service.http;version="1.2.1"
 Bundle-ActivationPolicy: lazy

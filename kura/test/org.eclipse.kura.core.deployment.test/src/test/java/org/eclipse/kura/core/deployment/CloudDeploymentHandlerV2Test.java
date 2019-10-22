@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Eurotech and/or its affiliates and others
+ * Copyright (c) 2018, 2019 Eurotech and/or its affiliates and others
  *
  *   All rights reserved. This program and the accompanying materials
  *   are made available under the terms of the Eclipse Public License v1.0
@@ -30,7 +30,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
+import java.util.concurrent.CompletableFuture;
 
 import org.eclipse.kura.KuraErrorCode;
 import org.eclipse.kura.KuraException;
@@ -38,9 +40,6 @@ import org.eclipse.kura.cloudconnection.message.KuraMessage;
 import org.eclipse.kura.cloudconnection.request.RequestHandlerContext;
 import org.eclipse.kura.configuration.ConfigurationService;
 import org.eclipse.kura.core.deployment.download.DeploymentPackageDownloadOptions;
-import org.eclipse.kura.core.deployment.download.DownloadCountingOutputStream;
-import org.eclipse.kura.core.deployment.download.impl.DownloadImpl;
-import org.eclipse.kura.core.deployment.download.impl.KuraNotifyPayload;
 import org.eclipse.kura.core.deployment.hook.DeploymentHookManager;
 import org.eclipse.kura.core.deployment.install.DeploymentPackageInstallOptions;
 import org.eclipse.kura.core.deployment.install.InstallImpl;
@@ -56,6 +55,11 @@ import org.eclipse.kura.core.testutil.TestUtil;
 import org.eclipse.kura.data.DataTransportService;
 import org.eclipse.kura.deployment.hook.DeploymentHook;
 import org.eclipse.kura.deployment.hook.RequestContext;
+import org.eclipse.kura.download.Download;
+import org.eclipse.kura.download.DownloadParameters;
+import org.eclipse.kura.download.DownloadService;
+import org.eclipse.kura.download.DownloadState;
+import org.eclipse.kura.download.DownloadStatus;
 import org.eclipse.kura.message.KuraRequestPayload;
 import org.eclipse.kura.message.KuraResponsePayload;
 import org.eclipse.kura.ssl.SslManagerService;
@@ -123,7 +127,8 @@ public class CloudDeploymentHandlerV2Test {
 
     @Test(expected = ComponentException.class)
     @Ignore
-    public void testActivateMissingDpaPathException() throws NoSuchFieldException, KuraException, InvalidSyntaxException {
+    public void testActivateMissingDpaPathException()
+            throws NoSuchFieldException, KuraException, InvalidSyntaxException {
         CloudDeploymentHandlerV2 handler = new CloudDeploymentHandlerV2();
         TestUtil.setFieldValue(handler, COMPONENT_OPTIONS_FIELD, new CloudDeploymentHandlerV2Options(new HashMap<>()));
 
@@ -135,7 +140,7 @@ public class CloudDeploymentHandlerV2Test {
 
         handler.setSystemService(systemService);
         when(systemService.getProperties()).thenReturn(new Properties());
-        
+
         BundleContext bundleContext = mock(BundleContext.class);
         Filter filter = mock(Filter.class);
         when(bundleContext.createFilter(anyString())).thenReturn(filter);
@@ -204,7 +209,7 @@ public class CloudDeploymentHandlerV2Test {
         handler.setSystemService(systemService);
         when(systemService.getProperties()).thenReturn(systemServiceProps);
         System.setProperty("dpa.configuration", "/opt/eclipse/kura/kura/dpa.properties");
-        
+
         BundleContext bundleContext = mock(BundleContext.class);
         Filter filter = mock(Filter.class);
         when(bundleContext.createFilter(anyString())).thenReturn(filter);
@@ -271,8 +276,7 @@ public class CloudDeploymentHandlerV2Test {
         assertEquals(KuraResponsePayload.RESPONSE_CODE_OK, resPayload.getResponseCode());
         assertEquals(0, resPayload.getMetric(KuraNotifyPayload.METRIC_TRANSFER_SIZE));
         assertEquals(100, resPayload.getMetric(KuraNotifyPayload.METRIC_TRANSFER_PROGRESS));
-        assertEquals(DownloadStatus.ALREADY_DONE.getStatusString(),
-                resPayload.getMetric(KuraNotifyPayload.METRIC_TRANSFER_STATUS));
+        assertEquals("ALREADY DONE", resPayload.getMetric(KuraNotifyPayload.METRIC_TRANSFER_STATUS));
 
     }
 
@@ -291,14 +295,20 @@ public class CloudDeploymentHandlerV2Test {
         TestUtil.setFieldValue(deployment, "downloadOptions", dlOptions);
         TestUtil.setFieldValue(deployment, "pendingPackageUrl", "someValidUrl");
 
-        DownloadImpl dlMock = mock(DownloadImpl.class);
-        TestUtil.setFieldValue(deployment, "downloadImplementation", dlMock);
+        final DownloadService downloadService = mock(DownloadService.class);
+        final Download download = mock(Download.class);
+        final DownloadState downloadState = mock(DownloadState.class);
 
-        DownloadCountingOutputStream stream = mock(DownloadCountingOutputStream.class);
-        when(dlMock.getDownloadHelper()).thenReturn(stream);
+        TestUtil.setFieldValue(deployment, "download", download);
 
-        when(stream.getDownloadTransferStatus()).thenReturn(DownloadStatus.IN_PROGRESS);
-        when(stream.getDownloadTransferProgressPercentage()).thenReturn(10L);
+        when(downloadService.createDownload(anyObject())).thenReturn(download);
+        when(download.getState()).thenReturn(downloadState);
+
+        when(downloadState.getTotalSize()).thenReturn(Optional.empty());
+        when(downloadState.getStatus()).thenReturn(DownloadStatus.IN_PROGRESS);
+        when(downloadState.getDownloadPercent()).thenReturn(10L);
+
+        deployment.setDownloadService(downloadService);
 
         when(dlOptions.getJobId()).thenReturn(1234L);
 
@@ -871,8 +881,17 @@ public class CloudDeploymentHandlerV2Test {
         CloudDeploymentHandlerV2 handler = new CloudDeploymentHandlerV2();
         TestUtil.setFieldValue(handler, COMPONENT_OPTIONS_FIELD, new CloudDeploymentHandlerV2Options(new HashMap<>()));
 
-        DownloadImpl dlMock = mock(DownloadImpl.class);
-        TestUtil.setFieldValue(handler, "downloadImplementation", dlMock);
+        final Download download = mock(Download.class);
+        final DownloadParameters params = mock(DownloadParameters.class);
+        when(download.getParameters()).thenReturn(params);
+        when(params.getDestination()).thenReturn(new File("/foo/bar"));
+
+        @SuppressWarnings("unchecked")
+        final CompletableFuture<Void> future = mock(CompletableFuture.class);
+
+        when(download.future()).thenReturn(future);
+
+        TestUtil.setFieldValue(handler, "download", download);
 
         List<String> resourcesList = new ArrayList<>();
         resourcesList.add(CloudDeploymentHandlerV2.RESOURCE_DOWNLOAD);
@@ -882,27 +901,20 @@ public class CloudDeploymentHandlerV2Test {
         KuraRequestPayload reqPayload = new KuraRequestPayload();
         KuraMessage message = new KuraMessage(reqPayload, reqResources);
 
-        DownloadCountingOutputStream stream = mock(DownloadCountingOutputStream.class);
-        when(dlMock.getDownloadHelper()).thenReturn(stream);
-
-        when(dlMock.deleteDownloadedFile()).thenReturn(true);
-
         handler.doDel(null, message);
 
-        verify(dlMock).getDownloadHelper();
-        verify(dlMock).deleteDownloadedFile();
-        verify(stream).cancelDownload();
+        verify(future).cancel(true);
+        verify(download).getParameters();
+        verify(params).getDestination();
     }
 
     @Test(expected = KuraException.class)
-    public void testDoDelException() throws Exception {
+    public void testDoDelException() throws NoSuchFieldException, KuraException {
         CloudDeploymentHandlerV2 handler = new CloudDeploymentHandlerV2();
         TestUtil.setFieldValue(handler, COMPONENT_OPTIONS_FIELD, new CloudDeploymentHandlerV2Options(new HashMap<>()));
 
-        DownloadImpl dlMock = mock(DownloadImpl.class);
-        String mesg = "test";
-        when(dlMock.getDownloadHelper()).thenThrow(new RuntimeException(mesg));
-        TestUtil.setFieldValue(handler, "downloadImplementation", dlMock);
+        final Download download = mock(Download.class);
+        TestUtil.setFieldValue(handler, "download", download);
 
         List<String> resourcesList = new ArrayList<>();
         resourcesList.add(CloudDeploymentHandlerV2.RESOURCE_DOWNLOAD);
@@ -914,7 +926,7 @@ public class CloudDeploymentHandlerV2Test {
 
         handler.doDel(null, message);
 
-        verify(dlMock).getDownloadHelper();
+        verify(download).future();
     }
 
     @Test(expected = KuraException.class)
@@ -989,10 +1001,11 @@ public class CloudDeploymentHandlerV2Test {
         DataTransportService dtsMock = mock(DataTransportService.class);
         handler.setDataTransportService(dtsMock);
 
-        DownloadImpl dlMock = mock(DownloadImpl.class);
+        final DownloadService downloadService = mock(DownloadService.class);
+
         KuraException ex = new KuraException(KuraErrorCode.OPERATION_NOT_SUPPORTED);
-        when(dlMock.isAlreadyDownloaded()).thenThrow(ex);
-        TestUtil.setFieldValue(handler, "downloadImplementation", dlMock);
+        when(downloadService.createDownload(anyObject(), anyObject())).thenThrow(ex);
+        TestUtil.setFieldValue(handler, "downloadService", downloadService);
 
         handler.doExec(null, message);
     }
@@ -1019,9 +1032,12 @@ public class CloudDeploymentHandlerV2Test {
         DataTransportService dtsMock = mock(DataTransportService.class);
         handler.setDataTransportService(dtsMock);
 
-        DownloadImpl dlMock = mock(DownloadImpl.class);
-        when(dlMock.isAlreadyDownloaded()).thenReturn(false);
-        TestUtil.setFieldValue(handler, "downloadImplementation", dlMock);
+        final Download download = mock(Download.class);
+        final DownloadState downloadState = mock(DownloadState.class);
+        when(downloadState.getStatus()).thenReturn(DownloadStatus.IN_PROGRESS);
+        when(download.getState()).thenReturn(downloadState);
+
+        TestUtil.setFieldValue(handler, "download", download);
 
         handler.doExec(null, message);
     }
@@ -1054,10 +1070,12 @@ public class CloudDeploymentHandlerV2Test {
         DataTransportService dtsMock = mock(DataTransportService.class);
         handler.setDataTransportService(dtsMock);
 
-        DownloadImpl dlMock = mock(DownloadImpl.class);
-        when(dlMock.isAlreadyDownloaded()).thenReturn(true);
-        TestUtil.setFieldValue(handler, "downloadImplementation", dlMock);
+        final Download download = mock(Download.class);
+        final DownloadState downloadState = mock(DownloadState.class);
+        when(downloadState.getStatus()).thenReturn(DownloadStatus.COMPLETED);
+        when(download.getState()).thenReturn(downloadState);
 
+        TestUtil.setFieldValue(handler, "download", download);
         TestUtil.setFieldValue(handler, "isInstalling", false);
 
         handler.doExec(null, message);
@@ -1097,9 +1115,11 @@ public class CloudDeploymentHandlerV2Test {
         DataTransportService dtsMock = mock(DataTransportService.class);
         handler.setDataTransportService(dtsMock);
 
-        DownloadImpl dlMock = mock(DownloadImpl.class);
-        when(dlMock.isAlreadyDownloaded()).thenReturn(true);
-        TestUtil.setFieldValue(handler, "downloadImplementation", dlMock);
+        final Download download = mock(Download.class);
+        final DownloadState downloadState = mock(DownloadState.class);
+        when(downloadState.getStatus()).thenReturn(DownloadStatus.COMPLETED);
+        when(download.getState()).thenReturn(downloadState);
+        TestUtil.setFieldValue(handler, "download", download);
 
         TestUtil.setFieldValue(handler, "isInstalling", false);
 
@@ -1163,6 +1183,7 @@ public class CloudDeploymentHandlerV2Test {
 
         when(dtsMock.getClientId()).thenReturn("ClientId");
 
+        handler.setDownloadService(mock(DownloadService.class));
         TestUtil.setFieldValue(handler, "pendingPackageUrl", "url");
 
         KuraMessage resMessage = handler.doExec(null, message);
@@ -1181,112 +1202,9 @@ public class CloudDeploymentHandlerV2Test {
     }
 
     @Test
-    public void testDoExecDownloadIsDownloadedException() throws KuraException, NoSuchFieldException {
-        // fail with DownloadImpl exception
-
-        DownloadImpl dlMock = mock(DownloadImpl.class);
-
-        CloudDeploymentHandlerV2 handler = new CloudDeploymentHandlerV2() {
-
-            @Override
-            protected DownloadImpl createDownloadImpl(DeploymentPackageDownloadOptions options) {
-                return dlMock;
-            }
-        };
-        TestUtil.setFieldValue(handler, COMPONENT_OPTIONS_FIELD, new CloudDeploymentHandlerV2Options(new HashMap<>()));
-
-        List<String> resourcesList = new ArrayList<>();
-        resourcesList.add(CloudDeploymentHandlerV2.RESOURCE_DOWNLOAD);
-        Map<String, Object> reqResources = new HashMap<>();
-        reqResources.put(ARGS_KEY.value(), resourcesList);
-
-        KuraRequestPayload reqPayload = new KuraRequestPayload();
-        KuraMessage message = new KuraMessage(reqPayload, reqResources);
-
-        reqPayload.addMetric(DeploymentPackageDownloadOptions.METRIC_DP_DOWNLOAD_URI, "");
-        reqPayload.addMetric(DeploymentPackageDownloadOptions.METRIC_DP_DOWNLOAD_PROTOCOL, "");
-        reqPayload.addMetric(DeploymentPackageOptions.METRIC_DP_NAME, "");
-        reqPayload.addMetric(DeploymentPackageOptions.METRIC_DP_VERSION, "");
-        reqPayload.addMetric(DeploymentPackageOptions.METRIC_JOB_ID, 1234L);
-        reqPayload.addMetric(DeploymentPackageInstallOptions.METRIC_DP_INSTALL_SYSTEM_UPDATE, false);
-
-        DataTransportService dtsMock = mock(DataTransportService.class);
-        handler.setDataTransportService(dtsMock);
-
-        when(dtsMock.getClientId()).thenReturn("ClientId");
-
-        Exception ex = new KuraException(KuraErrorCode.NOT_CONNECTED);
-        when(dlMock.isAlreadyDownloaded()).thenThrow(ex);
-
-        KuraMessage resMessage = handler.doExec(null, message);
-
-        KuraResponsePayload resPayload = (KuraResponsePayload) resMessage.getPayload();
-
-        assertEquals("Response code should match expected", KuraResponsePayload.RESPONSE_CODE_ERROR,
-                resPayload.getResponseCode());
-        assertNotNull("Response timestamp should be set", resPayload.getTimestamp());
-        assertEquals("Body should match", "Error checking download status",
-                new String(resPayload.getBody(), Charset.forName("UTF-8")));
-
-        verify(dlMock).isAlreadyDownloaded();
-    }
-
-    @Test(expected = KuraException.class)
-    public void testDoExecDownloadDownloaderException() throws KuraException, NoSuchFieldException {
-        // fail soon after calling doExecDownload
-
-        DownloadImpl dlMock = mock(DownloadImpl.class);
-
-        CloudDeploymentHandlerV2 handler = new CloudDeploymentHandlerV2() {
-
-            @Override
-            protected DownloadImpl createDownloadImpl(DeploymentPackageDownloadOptions options) {
-                return dlMock;
-            }
-        };
-        TestUtil.setFieldValue(handler, COMPONENT_OPTIONS_FIELD, new CloudDeploymentHandlerV2Options(new HashMap<>()));
-
-        List<String> resourcesList = new ArrayList<>();
-        resourcesList.add(CloudDeploymentHandlerV2.RESOURCE_DOWNLOAD);
-        Map<String, Object> reqResources = new HashMap<>();
-        reqResources.put(ARGS_KEY.value(), resourcesList);
-
-        KuraRequestPayload reqPayload = new KuraRequestPayload();
-        KuraMessage message = new KuraMessage(reqPayload, reqResources);
-
-        reqPayload.addMetric(DeploymentPackageDownloadOptions.METRIC_DP_DOWNLOAD_URI, "");
-        reqPayload.addMetric(DeploymentPackageDownloadOptions.METRIC_DP_DOWNLOAD_PROTOCOL, "");
-        reqPayload.addMetric(DeploymentPackageOptions.METRIC_DP_NAME, "");
-        reqPayload.addMetric(DeploymentPackageOptions.METRIC_DP_VERSION, "");
-        reqPayload.addMetric(DeploymentPackageOptions.METRIC_JOB_ID, 1234L);
-        reqPayload.addMetric(DeploymentPackageInstallOptions.METRIC_DP_INSTALL_SYSTEM_UPDATE, false);
-
-        DataTransportService dtsMock = mock(DataTransportService.class);
-        handler.setDataTransportService(dtsMock);
-
-        when(dtsMock.getClientId()).thenReturn("ClientId");
-
-        when(dlMock.isAlreadyDownloaded()).thenReturn(true);
-
-        doThrow(new RuntimeException("test")).when(dlMock).setSslManager(null);
-
-        handler.doExec(null, message);
-
-        verify(dlMock).isAlreadyDownloaded();
-        verify(dlMock).setSslManager(null);
-    }
-
-    @Test
     public void testDoExecDownloadSuccessfulNoInstall() throws KuraException, NoSuchFieldException {
-        DownloadImpl dlMock = mock(DownloadImpl.class);
 
-        CloudDeploymentHandlerV2 handler = new CloudDeploymentHandlerV2() {
-
-            @Override
-            protected DownloadImpl createDownloadImpl(DeploymentPackageDownloadOptions options) {
-                return dlMock;
-            }
-        };
+        CloudDeploymentHandlerV2 handler = new CloudDeploymentHandlerV2();
 
         TestUtil.setFieldValue(handler, COMPONENT_OPTIONS_FIELD, new CloudDeploymentHandlerV2Options(new HashMap<>()));
 
@@ -1315,7 +1233,14 @@ public class CloudDeploymentHandlerV2Test {
         SslManagerService sslManagerService = mock(SslManagerService.class);
         handler.setSslManagerService(sslManagerService);
 
-        when(dlMock.isAlreadyDownloaded()).thenReturn(false);
+        final DownloadService downloadService = mock(DownloadService.class);
+        final Download download = mock(Download.class);
+
+        when(downloadService.createDownload(anyObject(), anyObject())).thenReturn(download);
+        when(download.future()).thenReturn(new CompletableFuture<>());
+
+        handler.setDownloadService(downloadService);
+
         when(dtsMock.getClientId()).thenReturn("ClientId");
         TestUtil.setFieldValue(handler, "pendingPackageUrl", null);
 
@@ -1325,20 +1250,14 @@ public class CloudDeploymentHandlerV2Test {
         KuraResponsePayload resPayload = (KuraResponsePayload) resMessage.getPayload();
 
         assertEquals(KuraResponsePayload.RESPONSE_CODE_OK, resPayload.getResponseCode());
+        verify(download).start();
     }
 
     @Test
     public void testDoExecDownloadFailure()
             throws KuraException, NoSuchFieldException, IOException, InterruptedException {
-        DownloadImpl dlMock = mock(DownloadImpl.class);
 
-        CloudDeploymentHandlerV2 handler = new CloudDeploymentHandlerV2() {
-
-            @Override
-            protected DownloadImpl createDownloadImpl(DeploymentPackageDownloadOptions options) {
-                return dlMock;
-            }
-        };
+        CloudDeploymentHandlerV2 handler = new CloudDeploymentHandlerV2();
 
         TestUtil.setFieldValue(handler, COMPONENT_OPTIONS_FIELD, new CloudDeploymentHandlerV2Options(new HashMap<>()));
 
@@ -1366,10 +1285,17 @@ public class CloudDeploymentHandlerV2Test {
         SslManagerService sslManagerService = mock(SslManagerService.class);
         handler.setSslManagerService(sslManagerService);
 
-        when(dtsMock.getClientId()).thenReturn("ClientId");
+        final DownloadService downloadService = mock(DownloadService.class);
+        final Download download = mock(Download.class);
 
-        when(dlMock.isAlreadyDownloaded()).thenReturn(false);
-        doThrow(new KuraException(KuraErrorCode.INTERNAL_ERROR)).when(dlMock).downloadDeploymentPackageInternal();
+        when(downloadService.createDownload(anyObject(), anyObject())).thenReturn(download);
+
+        final CompletableFuture<Void> future = new CompletableFuture<>();
+        when(download.future()).thenReturn(future);
+
+        handler.setDownloadService(downloadService);
+
+        when(dtsMock.getClientId()).thenReturn("ClientId");
 
         RequestHandlerContext requestContext = new RequestHandlerContext(null, Collections.emptyMap());
         KuraMessage resMessage = handler.doExec(requestContext, message);
@@ -1378,8 +1304,11 @@ public class CloudDeploymentHandlerV2Test {
 
         assertEquals(KuraResponsePayload.RESPONSE_CODE_OK, resPayload.getResponseCode());
 
+        future.completeExceptionally(new RuntimeException("failed"));
+
         Thread.sleep(500);
         assertNull(TestUtil.getFieldValue(handler, "pendingPackageUrl"));
+        verify(download).start();
     }
 
     @Test(expected = KuraException.class)
@@ -1770,9 +1699,14 @@ public class CloudDeploymentHandlerV2Test {
 
         handler.setDeploymentHookManager(manager);
         handler.setDataTransportService(mock(DataTransportService.class));
-        final DownloadImpl mockDownloadImpl = mock(DownloadImpl.class);
-        when(mockDownloadImpl.isAlreadyDownloaded()).thenReturn(true);
-        TestUtil.setFieldValue(handler, "downloadImplementation", mockDownloadImpl);
+
+        final DownloadService downloadService = mock(DownloadService.class);
+        final Download download = mock(Download.class);
+
+        when(downloadService.createDownload(anyObject(), anyObject())).thenReturn(download);
+        when(download.future()).thenReturn(CompletableFuture.completedFuture(null));
+
+        handler.setDownloadService(downloadService);
 
         List<String> resourcesList = new ArrayList<>();
         resourcesList.add(CloudDeploymentHandlerV2.RESOURCE_INSTALL);

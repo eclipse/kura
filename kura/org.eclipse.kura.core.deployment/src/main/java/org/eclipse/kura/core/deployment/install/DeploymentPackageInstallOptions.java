@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2018 Eurotech and/or its affiliates
+ * Copyright (c) 2011, 2019 Eurotech and/or its affiliates
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -23,7 +23,7 @@ import org.eclipse.kura.KuraErrorCode;
 import org.eclipse.kura.KuraException;
 import org.eclipse.kura.KuraInvalidMessageException;
 import org.eclipse.kura.core.deployment.DeploymentPackageOptions;
-import org.eclipse.kura.core.deployment.download.DownloadFileUtilities;
+import org.eclipse.kura.core.deployment.download.impl.Utils;
 import org.eclipse.kura.core.deployment.hook.DeploymentHookManager;
 import org.eclipse.kura.deployment.hook.DeploymentHook;
 import org.eclipse.kura.deployment.hook.RequestContext;
@@ -167,8 +167,7 @@ public class DeploymentPackageInstallOptions extends DeploymentPackageOptions {
         if (metric != null) {
             setRequestType((String) metric);
             setDeploymentHook(hookManager.getHook(requestType));
-            setHookRequestContext(
-                    new RequestContext(DownloadFileUtilities.getDpDownloadFile(this).getAbsolutePath(), requestType));
+            setHookRequestContext(new RequestContext(Utils.getDpDownloadFile(this).getAbsolutePath(), requestType));
         } else {
             setDeploymentHook(null);
         }

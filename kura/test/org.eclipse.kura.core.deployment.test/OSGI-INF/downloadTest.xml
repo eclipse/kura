@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" enabled="true" immediate="true" name="org.eclipse.kura.core.deployment.download.test.DownloadServiceTest">
+   <implementation class="org.eclipse.kura.core.deployment.download.test.DownloadServiceTest"/>
+   <reference bind="setDownloadService" cardinality="1..1" interface="org.eclipse.kura.download.DownloadService" name="DownloadService" policy="static"/>
+   <reference bind="setHttpService" cardinality="1..1" interface="org.osgi.service.http.HttpService" name="HttpService" policy="static"/>
+</scr:component>

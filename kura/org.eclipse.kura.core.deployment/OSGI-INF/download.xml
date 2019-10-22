@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="org.eclipse.kura.core.deployment.download.impl.DownloadServiceImpl">
+   <implementation class="org.eclipse.kura.core.deployment.download.impl.DownloadServiceImpl"/>
+   <reference bind="setSslManagerService" cardinality="1..1" interface="org.eclipse.kura.ssl.SslManagerService" name="SslManagerService" policy="static" unbind="unsetSslManagetService"/>
+   <service>
+      <provide interface="org.eclipse.kura.download.DownloadService"/>
+   </service>
+</scr:component>

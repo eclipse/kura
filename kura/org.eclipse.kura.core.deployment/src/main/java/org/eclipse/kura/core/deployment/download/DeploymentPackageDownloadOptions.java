@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2018 Eurotech and/or its affiliates
+ * Copyright (c) 2011, 2019 Eurotech and/or its affiliates
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -12,15 +12,30 @@
 
 package org.eclipse.kura.core.deployment.download;
 
+import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Optional;
+import java.util.regex.Pattern;
+
 import org.eclipse.kura.KuraErrorCode;
 import org.eclipse.kura.KuraException;
 import org.eclipse.kura.KuraInvalidMessageException;
 import org.eclipse.kura.core.deployment.hook.DeploymentHookManager;
 import org.eclipse.kura.core.deployment.install.DeploymentPackageInstallOptions;
+import org.eclipse.kura.download.Credentials;
+import org.eclipse.kura.download.DownloadParameters;
+import org.eclipse.kura.download.Hash;
+import org.eclipse.kura.download.UsernamePassword;
 import org.eclipse.kura.message.KuraPayload;
 import org.eclipse.kura.message.KuraRequestPayload;
 
 public class DeploymentPackageDownloadOptions extends DeploymentPackageInstallOptions {
+
+    private static final Pattern CHECKSUM_SEPARATOR = Pattern.compile(":");
 
     // Metrics in RESOURCE_DOWNLOAD
     public static final String METRIC_DP_DOWNLOAD_URI = "dp.uri";
@@ -239,5 +254,48 @@ public class DeploymentPackageDownloadOptions extends DeploymentPackageInstallOp
 
     public void setHash(String hash) {
         this.hash = hash;
+    }
+
+    public DownloadParameters toDownloadRequest(final File destination) throws URISyntaxException {
+        return DownloadParameters.builder() //
+                .withUri(new URI(getDeployUri())) //
+                .withDestination(destination) //
+                .withResume(isResume()) //
+                .withForceDownload(forceDownload) //
+                .withTimeoutMs(timeout > 0 ? Optional.of((long) timeout) : Optional.empty()) //
+                .withChecksum(getChecksumHash()) //
+                .withCredentials(getCredentials()) //
+                .withBlockSize(blockSize > 0 ? Optional.of((long) blockSize) : Optional.empty()) //
+                .withBlockDelay(blockDelay > 0 ? Optional.of((long) blockDelay) : Optional.empty()) //
+                .withNotificationBlockSize(notifyBlockSize > 0 ? Optional.of((long) notifyBlockSize) : Optional.empty()) //
+                .withExtraProperties(getExtraProperties()) //
+                .build();
+    }
+
+    private Map<String, Object> getExtraProperties() {
+        if ("ftps".equalsIgnoreCase(downloadProtocol)) {
+            return Collections.singletonMap("ftps", true);
+        } else {
+            return Collections.emptyMap();
+        }
+    }
+
+    private Optional<Credentials> getCredentials() {
+        if (username != null && password != null) {
+            return Optional.of(new UsernamePassword(username.toCharArray(), password.toCharArray()));
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    private Optional<Hash> getChecksumHash() {
+
+        try {
+            final Iterator<String> splitted = CHECKSUM_SEPARATOR.splitAsStream(hash).map(String::trim).iterator();
+
+            return Optional.of(new Hash(splitted.next(), splitted.next()));
+        } catch (final Exception e) {
+            return Optional.empty();
+        }
     }
 }

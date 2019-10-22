@@ -20,14 +20,19 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.nio.file.Files;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.kura.KuraErrorCode;
 import org.eclipse.kura.KuraException;
@@ -38,9 +43,7 @@ import org.eclipse.kura.cloudconnection.request.RequestHandlerContext;
 import org.eclipse.kura.cloudconnection.request.RequestHandlerRegistry;
 import org.eclipse.kura.configuration.ConfigurableComponent;
 import org.eclipse.kura.core.deployment.download.DeploymentPackageDownloadOptions;
-import org.eclipse.kura.core.deployment.download.DownloadCountingOutputStream;
-import org.eclipse.kura.core.deployment.download.DownloadFileUtilities;
-import org.eclipse.kura.core.deployment.download.impl.DownloadImpl;
+import org.eclipse.kura.core.deployment.download.impl.Utils;
 import org.eclipse.kura.core.deployment.hook.DeploymentHookManager;
 import org.eclipse.kura.core.deployment.install.DeploymentPackageInstallOptions;
 import org.eclipse.kura.core.deployment.install.InstallImpl;
@@ -53,6 +56,12 @@ import org.eclipse.kura.core.deployment.xml.XmlDeploymentPackage;
 import org.eclipse.kura.core.deployment.xml.XmlDeploymentPackages;
 import org.eclipse.kura.data.DataTransportService;
 import org.eclipse.kura.deployment.hook.DeploymentHook;
+import org.eclipse.kura.download.Download;
+import org.eclipse.kura.download.DownloadParameters;
+import org.eclipse.kura.download.DownloadService;
+import org.eclipse.kura.download.DownloadState;
+import org.eclipse.kura.download.DownloadStatus;
+import org.eclipse.kura.download.listener.DownloadStateChangeListener;
 import org.eclipse.kura.marshalling.Marshaller;
 import org.eclipse.kura.message.KuraPayload;
 import org.eclipse.kura.message.KuraResponsePayload;
@@ -75,7 +84,7 @@ import org.osgi.util.tracker.ServiceTrackerCustomizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CloudDeploymentHandlerV2 implements ConfigurableComponent, RequestHandler {
+public class CloudDeploymentHandlerV2 implements ConfigurableComponent, RequestHandler, DownloadStateChangeListener {
 
     private final class CloudNotificationPublisherTrackerCustomizer
             implements ServiceTrackerCustomizer<CloudNotificationPublisher, CloudNotificationPublisher> {
@@ -130,7 +139,6 @@ public class CloudDeploymentHandlerV2 implements ConfigurableComponent, RequestH
     private static final String APP_ID_KEY = "appId";
 
     private static String pendingPackageUrl = null;
-    private static DownloadImpl downloadImplementation;
     private static UninstallImpl uninstallImplementation;
     public static InstallImpl installImplementation;
 
@@ -140,10 +148,11 @@ public class CloudDeploymentHandlerV2 implements ConfigurableComponent, RequestH
     private DeploymentAdmin deploymentAdmin;
     private SystemService systemService;
     private DeploymentHookManager deploymentHookManager;
+    private DownloadService downloadService;
 
     private static ExecutorService executor = Executors.newSingleThreadExecutor();
 
-    private Future<?> downloaderFuture;
+    private Download download;
     private Future<?> installerFuture;
 
     private BundleContext bundleContext;
@@ -176,6 +185,14 @@ public class CloudDeploymentHandlerV2 implements ConfigurableComponent, RequestH
 
     public void unsetSslManagerService(SslManagerService sslManagerService) {
         this.sslManagerService = null;
+    }
+
+    public void setDownloadService(final DownloadService downloadService) {
+        this.downloadService = downloadService;
+    }
+
+    public void unsetDownloadService(final DownloadService downloadService) {
+        this.downloadService = null;
     }
 
     protected void setDeploymentAdmin(DeploymentAdmin deploymentAdmin) {
@@ -269,8 +286,8 @@ public class CloudDeploymentHandlerV2 implements ConfigurableComponent, RequestH
 
     protected void deactivate(ComponentContext componentContext) {
         logger.info("Bundle {} is deactivating!", APP_ID);
-        if (this.downloaderFuture != null) {
-            this.downloaderFuture.cancel(true);
+        if (this.download != null) {
+            this.download.future().cancel(false);
         }
 
         if (this.installerFuture != null) {
@@ -419,17 +436,12 @@ public class CloudDeploymentHandlerV2 implements ConfigurableComponent, RequestH
         return new KuraMessage(resPayload);
     }
 
-    protected DownloadImpl createDownloadImpl(final DeploymentPackageDownloadOptions options) {
-        DownloadImpl downloadImplementation = new DownloadImpl(options, this);
-        return downloadImplementation;
-    }
-
     protected UninstallImpl createUninstallImpl() {
         return new UninstallImpl(this, this.deploymentAdmin);
     }
 
     protected File getDpDownloadFile(final DeploymentPackageInstallOptions options) throws IOException {
-        return DownloadFileUtilities.getDpDownloadFile(options);
+        return Utils.getDpDownloadFile(options);
     }
 
     // ----------------------------------------------------------------
@@ -455,10 +467,15 @@ public class CloudDeploymentHandlerV2 implements ConfigurableComponent, RequestH
     private KuraPayload doDelDownload() throws KuraException {
 
         try {
-            DownloadCountingOutputStream downloadHelper = downloadImplementation.getDownloadHelper();
-            if (downloadHelper != null) {
-                downloadHelper.cancelDownload();
-                downloadImplementation.deleteDownloadedFile();
+            if (download != null) {
+                final Future<Void> downloadFuture = download.future();
+
+                cancelSilently(downloadFuture);
+
+                deleteSilently(download.getParameters().getDestination());
+
+                download.unregisterListener(this);
+                download = null;
             }
         } catch (Exception ex) {
             String errMsg = "Error cancelling download!";
@@ -467,6 +484,23 @@ public class CloudDeploymentHandlerV2 implements ConfigurableComponent, RequestH
         }
 
         return new KuraResponsePayload(KuraResponsePayload.RESPONSE_CODE_OK);
+    }
+
+    private void deleteSilently(final File file) {
+        try {
+            Files.delete(file.toPath());
+        } catch (final Exception e) {
+            logger.warn("failed to delete downloaded file", e);
+        }
+    }
+
+    private void cancelSilently(final Future<Void> downloadFuture) {
+        try {
+            downloadFuture.cancel(true);
+            downloadFuture.get(30, TimeUnit.SECONDS);
+        } catch (final Exception e) {
+            logger.debug("got exception while cancelling download future", e);
+        }
     }
 
     private void checkHook(DeploymentPackageInstallOptions options) {
@@ -481,10 +515,16 @@ public class CloudDeploymentHandlerV2 implements ConfigurableComponent, RequestH
         KuraResponsePayload response = new KuraResponsePayload(KuraResponsePayload.RESPONSE_CODE_OK);
 
         final DeploymentPackageDownloadOptions options;
+        final Download download;
+
         try {
             options = new DeploymentPackageDownloadOptions(request, this.deploymentHookManager,
                     this.componentOptions.getDownloadsDirectory());
             options.setClientId(this.dataTransportService.getClientId());
+
+            final DownloadParameters downloadRequest = options.toDownloadRequest(Utils.getDpDownloadFile(options));
+
+            download = downloadService.createDownload(downloadRequest, executor);
         } catch (Exception ex) {
             logger.info("Malformed download request!");
             throw new KuraException(KuraErrorCode.BAD_REQUEST);
@@ -511,23 +551,6 @@ public class CloudDeploymentHandlerV2 implements ConfigurableComponent, RequestH
             return response;
         }
 
-        downloadImplementation = createDownloadImpl(options);
-
-        boolean alreadyDownloaded = false;
-
-        try {
-            alreadyDownloaded = downloadImplementation.isAlreadyDownloaded();
-        } catch (KuraException ex) {
-            response.setResponseCode(KuraResponsePayload.RESPONSE_CODE_ERROR);
-            response.setException(ex);
-            response.setTimestamp(new Date());
-            try {
-                response.setBody("Error checking download status".getBytes("UTF-8"));
-            } catch (UnsupportedEncodingException e) {
-            }
-            return response;
-        }
-
         logger.info("About to download and install package at URL {}", options.getDeployUri());
 
         try {
@@ -543,10 +566,6 @@ public class CloudDeploymentHandlerV2 implements ConfigurableComponent, RequestH
 
             pendingPackageUrl = options.getDeployUri();
 
-            downloadImplementation.setSslManager(this.sslManagerService);
-            downloadImplementation.setAlreadyDownloadedFlag(alreadyDownloaded);
-            downloadImplementation.setVerificationDirectory(this.installVerificationDir);
-
             Map<String, String> requestProperties = requestContext.getContextProperties();
             String notificationPublisherPid = requestProperties.get(NOTIFICATION_PUBLISHER_PID.name());
 
@@ -555,33 +574,38 @@ public class CloudDeploymentHandlerV2 implements ConfigurableComponent, RequestH
 
             logger.info("Downloading package from URL: {}", options.getDeployUri());
 
-            this.downloaderFuture = executor.submit(new Runnable() {
+            this.download = download;
+            download.registerListener(this);
+            download.start();
 
-                @Override
-                public void run() {
+            CompletableFuture<Void> downloadFuture = download.future();
+
+            if (options.isInstall()) {
+                downloadFuture = downloadFuture.thenAcceptAsync(ok -> {
                     try {
-
-                        downloadImplementation.downloadDeploymentPackageInternal();
-                    } catch (KuraException e) {
-                        logger.warn("deployment package download failed", e);
-
-                        try {
-                            File dpFile = getDpDownloadFile(options);
-                            if (dpFile != null) {
-                                dpFile.delete();
-                            }
-                        } catch (IOException e1) {
-                        }
-                    } finally {
-                        pendingPackageUrl = null;
+                        doExecInstall(requestContext, request);
+                    } catch (final Exception e) {
+                        logger.warn("unexpected exception during install", e);
                     }
-                }
-            });
+                }, executor);
+            }
+
+            downloadFuture.whenCompleteAsync((ok, ex) -> {
+                this.download.unregisterListener(this);
+                this.download = null;
+                pendingPackageUrl = null;
+            }, executor);
 
         } catch (Exception e) {
             logger.error("Failed to download and install package at URL {}: {}", options.getDeployUri(), e);
 
             pendingPackageUrl = null;
+
+            if (this.download != null) {
+                this.download.unregisterListener(this);
+                this.download.future().cancel(false);
+                this.download = null;
+            }
 
             throw new KuraException(KuraErrorCode.PROCESS_EXECUTION_ERROR);
         }
@@ -609,12 +633,14 @@ public class CloudDeploymentHandlerV2 implements ConfigurableComponent, RequestH
             throw new KuraException(KuraErrorCode.BAD_REQUEST);
         }
 
-        boolean alreadyDownloaded = false;
+        final boolean alreadyDownloaded;
 
-        try {
-            alreadyDownloaded = downloadImplementation.isAlreadyDownloaded();
-        } catch (KuraException ex) {
-            throw new KuraException(KuraErrorCode.BAD_REQUEST);
+        if (download != null) {
+            final DownloadStatus state = download.getState().getStatus();
+
+            alreadyDownloaded = state == DownloadStatus.COMPLETED;
+        } else {
+            alreadyDownloaded = false;
         }
 
         if (alreadyDownloaded && !this.isInstalling) {
@@ -789,11 +815,10 @@ public class CloudDeploymentHandlerV2 implements ConfigurableComponent, RequestH
 
     private KuraPayload doGetDownload() {
         KuraResponsePayload respPayload = new KuraResponsePayload(KuraResponsePayload.RESPONSE_CODE_OK);
-        if (pendingPackageUrl != null) { // A download is pending
-            DownloadCountingOutputStream downloadHelper = downloadImplementation.getDownloadHelper();
-            DownloadImpl.downloadInProgressSyncMessage(respPayload, downloadHelper, this.downloadOptions);
+        if (download != null) { // A download is pending
+            publishDownloadStatus(respPayload, download.getState());
         } else { // No pending downloads
-            DownloadImpl.downloadAlreadyDoneSyncMessage(respPayload); // is it right? Do we remove the last object
+            publishAlreadyDoneMessage(respPayload); // is it right? Do we remove the last object
         }
 
         return respPayload;
@@ -947,5 +972,61 @@ public class CloudDeploymentHandlerV2 implements ConfigurableComponent, RequestH
             ungetServiceReferences(marshallerSRs);
         }
         return result;
+    }
+
+    private void publishDownloadStatus(final KuraResponsePayload respPayload, final DownloadState downloadState) {
+        respPayload.setTimestamp(new Date());
+        respPayload.addMetric(KuraNotifyPayload.METRIC_TRANSFER_SIZE,
+                (int) (long) downloadState.getTotalSize().orElse(0L));
+        respPayload.addMetric(KuraNotifyPayload.METRIC_TRANSFER_PROGRESS, (int) downloadState.getDownloadPercent());
+        respPayload.addMetric(KuraNotifyPayload.METRIC_TRANSFER_STATUS, downloadState.getStatus().getStatusString());
+        respPayload.addMetric(KuraNotifyPayload.METRIC_JOB_ID, downloadOptions.getJobId());
+    }
+
+    private void publishAlreadyDoneMessage(KuraResponsePayload respPayload) {
+        respPayload.setTimestamp(new Date());
+        respPayload.addMetric(KuraNotifyPayload.METRIC_TRANSFER_SIZE, 0);
+        respPayload.addMetric(KuraNotifyPayload.METRIC_TRANSFER_PROGRESS, 100);
+        respPayload.addMetric(KuraNotifyPayload.METRIC_TRANSFER_STATUS, "ALREADY DONE");
+    }
+
+    @Override
+    public void onDownloadStateChange(DownloadParameters request, DownloadState downloadState) {
+
+        KuraNotifyPayload notify = new KuraNotifyPayload(downloadOptions.getClientId());
+
+        logDownloadEvent(request, downloadState);
+
+        notify.setTimestamp(new Date());
+        notify.setTransferSize((int) (long) downloadState.getTotalSize().orElse(0L));
+        notify.setTransferProgress((int) downloadState.getDownloadPercent());
+        notify.setTransferStatus(downloadState.getStatus().getStatusString());
+        notify.setJobId(downloadOptions.getJobId());
+        downloadState.getException().ifPresent(e -> notify.setErrorMessage(e.getMessage()));
+
+        notify.setTransferIndex(0);
+
+        publishMessage(downloadOptions, notify, RESOURCE_DOWNLOAD);
+    }
+
+    private void logDownloadEvent(DownloadParameters request, DownloadState downloadState) {
+        final DownloadStatus status = downloadState.getStatus();
+
+        final URI uri = request.getUri();
+
+        if (status == DownloadStatus.FAILED) {
+            final Optional<Throwable> exception = downloadState.getException();
+
+            if (exception.isPresent()) {
+                logger.warn("{}: {} ", uri, status, exception.get());
+            } else {
+                logger.warn("{}: {}", uri, status);
+            }
+
+        } else if (status == DownloadStatus.IN_PROGRESS) {
+            logger.info("{}: {} {}%", uri, status, downloadState.getDownloadPercent());
+        } else {
+            logger.info("{}: {}", uri, status);
+        }
     }
 }

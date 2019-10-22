@@ -43,7 +43,7 @@ Copyright (c) 2017 Eurotech and/or its affiliates and others
                         -Dosgi.clean=true
                         -Dorg.eclipse.kura.mode=emulator
                         -Dkura.configuration=file:${kura.basedir}/emulator/org.eclipse.kura.emulator/src/main/resources/kura.properties
-                        -Ddpa.configuration=/tmp/kura/dpa.properties</argLine>
+                        -Ddpa.configuration=/tmp/kura/dpa.properties -Dosgi.console=5002 -Dorg.osgi.service.http.port=8181</argLine>
                     <bundleStartLevel>
                         <bundle>
                             <id>org.eclipse.equinox.ds</id>
@@ -195,6 +195,26 @@ Copyright (c) 2017 Eurotech and/or its affiliates and others
                             <level>4</level>
                             <autoStart>true</autoStart>
                         </bundle>
+                        <bundle>
+                            <id>org.eclipse.equinox.http.jetty</id>
+                            <level>4</level>
+                            <autoStart>true</autoStart>
+                        </bundle>
+                        <bundle>
+                            <id>org.apache.felix.gogo.shell</id>
+                            <level>4</level>
+                            <autoStart>true</autoStart>
+                        </bundle>
+                        <bundle>
+                            <id>org.eclipse.equinox.console</id>
+                            <level>4</level>
+                            <autoStart>true</autoStart>
+                        </bundle>
+                        <bundle>
+                            <id>org.eclipse.equinox.http.servlet</id>
+                            <level>4</level>
+                            <autoStart>true</autoStart>
+                        </bundle>
                     </bundleStartLevel>
                     <dependencies>
                         <dependency>
@@ -281,6 +301,22 @@ Copyright (c) 2017 Eurotech and/or its affiliates and others
                             <type>p2-installable-unit</type>
                             <artifactId>org.apache.commons.io</artifactId>
                         </dependency>
+                        <dependency>
+                        	<type>p2-installable-unit</type>
+                            <artifactId>org.eclipse.equinox.http.jetty</artifactId>
+                        </dependency>
+                        <dependency>
+                        	<type>p2-installable-unit</type>
+                            <artifactId>org.apache.felix.gogo.shell</artifactId>
+                        </dependency>
+                        <dependency>
+                        	<type>p2-installable-unit</type>
+                            <artifactId>org.eclipse.equinox.console</artifactId>
+                        </dependency>
+                        <dependency>
+                        	<type>p2-installable-unit</type>
+                            <artifactId>org.eclipse.equinox.http.servlet</artifactId>
+                        </dependency>
                     </dependencies>
                 </configuration>
             </plugin>
@@ -291,6 +327,11 @@ Copyright (c) 2017 Eurotech and/or its affiliates and others
                 <configuration>
                     <dependency-resolution>
                         <extraRequirements>
+                        	<requirement>
+                                <type>eclipse-plugin</type>
+                                <id>org.eclipse.equinox.http.jetty</id>
+                                <versionRange>0.0.0</versionRange>
+                            </requirement>
                             <requirement>
                                 <type>eclipse-plugin</type>
                                 <id>org.hamcrest</id>
@@ -352,4 +393,23 @@ Copyright (c) 2017 Eurotech and/or its affiliates and others
             </plugin>
         </plugins>
     </build>
+    
+    <profiles>
+    <profile>
+      <id>test-debug</id>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>org.eclipse.tycho</groupId>
+              <artifactId>tycho-surefire-plugin</artifactId>
+              <configuration>
+                <debugPort>8000</debugPort>
+              </configuration>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+      </build>
+    </profile>
+  </profiles>
 </project>

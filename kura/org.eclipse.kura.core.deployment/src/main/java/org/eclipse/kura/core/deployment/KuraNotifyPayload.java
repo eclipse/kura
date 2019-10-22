@@ -9,7 +9,7 @@
  * Contributors:
  *     Eurotech
  *******************************************************************************/
-package org.eclipse.kura.core.deployment.download.impl;
+package org.eclipse.kura.core.deployment;
 
 import java.text.ParseException;
 
