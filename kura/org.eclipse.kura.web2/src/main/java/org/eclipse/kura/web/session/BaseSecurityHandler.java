@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019 Eurotech and/or its affiliates and others
+ * Copyright (c) 2019, 2020 Eurotech and/or its affiliates and others
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -27,8 +27,9 @@ public class BaseSecurityHandler implements SecurityHandler {
         response.setHeader("X-FRAME-OPTIONS", "SAMEORIGIN");
         response.setHeader("X-XSS-protection", "1; mode=block");
         response.setHeader("X-Content-Type-Options", "nosniff");
-        response.setHeader("Cache-Control", "no-cache,no-store,must-revalidate");
+        response.setHeader("Cache-Control", "no-store");
         response.setHeader("Pragma", "no-cache");
+        response.setHeader("Content-Security-Policy", "default-src 'self'; font-src 'self' data:; img-src 'self' data:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'");
 
         fixTrailingSlashes(request, response);
 

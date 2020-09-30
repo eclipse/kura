@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2017 Eurotech and/or its affiliates
+ * Copyright (c) 2011, 2020 Eurotech and/or its affiliates
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -83,7 +83,7 @@ public class DeviceSnapshotsServlet extends HttpServlet {
                 response.setCharacterEncoding("UTF-8");
                 response.setContentType("application/xml");
                 response.setHeader("Content-Disposition", "attachment; filename=snapshot_" + sid + ".xml");
-                response.setHeader("Cache-Control", "no-transform, max-age=0");
+                response.setHeader("Cache-Control", "no-transform, no-cache, max-age=0");
 
                 writer.write(result);
 

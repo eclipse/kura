@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018, 2019 Eurotech and/or its affiliates and others
+ * Copyright (c) 2018, 2020 Eurotech and/or its affiliates and others
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -135,7 +135,7 @@ public class WiresSnapshotServlet extends HttpServlet {
             response.setCharacterEncoding("UTF-8");
             response.setContentType("application/xml");
             response.setHeader("Content-Disposition", "attachment; filename=" + snapshotName);
-            response.setHeader("Cache-Control", "no-transform, max-age=0");
+            response.setHeader("Cache-Control", "no-transform, no-cache, max-age=0");
 
             try (PrintWriter writer = response.getWriter()) {
                 writer.write(marshalled);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2018 Eurotech and/or its affiliates and others
+ * Copyright (c) 2016, 2020 Eurotech and/or its affiliates and others
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -128,7 +128,7 @@ public final class WiresBlinkServlet extends HttpServlet implements WireAdminLis
         // set the response headers for SSE
         response.setContentType("text/event-stream");
         response.setCharacterEncoding("UTF-8");
-        response.setHeader("Cache-control", "no-cache");
+        response.setHeader("Cache-control", "no-cache, max-age=0");
         response.setHeader("Connection", "keep-alive");
         response.setHeader("Access-Control-Allow-Origin", "*"); // required for IE9
         response.setHeader("Content-Encoding", "identity"); // allow compressed data

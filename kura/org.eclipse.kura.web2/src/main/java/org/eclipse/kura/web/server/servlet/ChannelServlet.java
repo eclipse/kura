@@ -59,7 +59,7 @@ public class ChannelServlet extends HttpServlet {
             resp.setCharacterEncoding("UTF-8");
             resp.setContentType("text/csv");
             resp.setHeader("Content-Disposition", "attachment; filename=asset_" + assetPid + ".csv");
-            resp.setHeader("Cache-Control", "no-transform, max-age=0");
+            resp.setHeader("Cache-Control", "no-transform, no-cache, max-age=0");
             try (PrintWriter writer = resp.getWriter()) {
                 writer.write(result);
             }
