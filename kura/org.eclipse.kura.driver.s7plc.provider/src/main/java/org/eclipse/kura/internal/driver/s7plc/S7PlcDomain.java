@@ -12,25 +12,36 @@
 
 package org.eclipse.kura.internal.driver.s7plc;
 
+import java.util.Objects;
+
 public class S7PlcDomain {
 
     private final int db;
+    private final S7PlcArea area;
 
-    public S7PlcDomain(int db) {
+    public S7PlcDomain(int db, S7PlcArea area) {
         this.db = db;
+        this.area = area;
     }
 
     public int getDB() {
         return this.db;
     }
 
+    public S7PlcArea getArea() {
+        return this.area;
+    }
+
     @Override
     public int hashCode() {
-        return this.db;
+        return Objects.hash(area, db);
     }
 
     @Override
     public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
         if (obj == null) {
             return false;
         }
@@ -38,9 +49,7 @@ public class S7PlcDomain {
             return false;
         }
         S7PlcDomain other = (S7PlcDomain) obj;
-        if (this.db != other.db) {
-            return false;
-        }
-        return true;
+        return area == other.area && db == other.db;
     }
+
 }

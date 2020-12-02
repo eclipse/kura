@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2018 Eurotech and/or its affiliates and others
+ * Copyright (c) 2017, 2020 Eurotech and/or its affiliates and others
  *
  *   All rights reserved. This program and the accompanying materials
  *   are made available under the terms of the Eclipse Public License v1.0
@@ -45,11 +45,25 @@ public class S7PlcToplevelBlockTaskTest {
 
         Mode mode = Mode.READ;
         int end = 5;
-        S7PlcToplevelBlockTask task = new S7PlcToplevelBlockTask(driver, mode, db, start, end);
+        S7PlcToplevelBlockTask task = new S7PlcToplevelBlockTask(driver, mode, db, S7.S7AreaDB, start, end);
 
         task.processBuffer();
 
         verify(s7Mock, times(1)).ReadArea(eq(S7.S7AreaDB), eq(db), eq(start), eq(5), anyObject());
+        
+        db = 3;
+        start = 0;
+        
+        when(s7Mock.ReadArea(eq(S7.S7AreaMK), eq(db), eq(start), eq(5), anyObject())).thenReturn(0);
+
+        mode = Mode.READ;
+        end = 5;
+        task = new S7PlcToplevelBlockTask(driver, mode, db, S7.S7AreaMK, start, end);
+
+        task.processBuffer();
+
+        verify(s7Mock, times(1)).ReadArea(eq(S7.S7AreaMK), eq(db), eq(start), eq(5), anyObject());
+        
     }
 
     @Test
@@ -68,10 +82,23 @@ public class S7PlcToplevelBlockTaskTest {
 
         Mode mode = Mode.UPDATE;
         int end = 5;
-        S7PlcToplevelBlockTask task = new S7PlcToplevelBlockTask(driver, mode, db, start, end);
+        S7PlcToplevelBlockTask task = new S7PlcToplevelBlockTask(driver, mode, db, S7.S7AreaDB, start, end);
 
         task.processBuffer();
 
         verify(s7Mock, times(1)).WriteArea(eq(S7.S7AreaDB), eq(db), eq(start), eq(5), anyObject());
+        
+        db = 3;
+        start = 0;
+
+        when(s7Mock.WriteArea(eq(S7.S7AreaMK), eq(db), eq(start), eq(5), anyObject())).thenReturn(0);
+
+        mode = Mode.UPDATE;
+        end = 5;
+        task = new S7PlcToplevelBlockTask(driver, mode, db, S7.S7AreaMK, start, end);
+
+        task.processBuffer();
+
+        verify(s7Mock, times(1)).WriteArea(eq(S7.S7AreaMK), eq(db), eq(start), eq(5), anyObject());
     }
 }

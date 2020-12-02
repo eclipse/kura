@@ -30,6 +30,7 @@ import org.eclipse.kura.driver.block.task.BlockTask;
 import org.eclipse.kura.driver.block.task.ByteArrayTask;
 import org.eclipse.kura.driver.block.task.Mode;
 import org.eclipse.kura.driver.block.task.StringTask;
+import org.eclipse.kura.internal.driver.s7plc.S7PlcArea;
 import org.eclipse.kura.internal.driver.s7plc.S7PlcChannelDescriptor;
 import org.eclipse.kura.internal.driver.s7plc.S7PlcDataType;
 import org.eclipse.kura.internal.driver.s7plc.S7PlcDomain;
@@ -40,9 +41,20 @@ public final class S7PlcTaskBuilder {
     private S7PlcTaskBuilder() {
     }
 
-    private static int getAreaNo(ChannelRecord record) throws KuraException {
+    private static int getDbNo(ChannelRecord record) throws KuraException {
         try {
-            return getIntProperty(record, S7PlcChannelDescriptor.DATA_BLOCK_NO_ID, "Error while retrieving Area No");
+            return getIntProperty(record, S7PlcChannelDescriptor.DATA_BLOCK_NO_ID, "Error while retrieving Address No");
+        } catch (KuraException e) {
+            record.setChannelStatus(new ChannelStatus(ChannelFlag.FAILURE, e.getMessage(), e));
+            record.setTimestamp(System.currentTimeMillis());
+            throw e;
+        }
+    }
+
+    private static S7PlcArea getAreaNo(ChannelRecord record) throws KuraException {
+        try {
+            final int raw = getIntProperty(record, S7PlcChannelDescriptor.AREA_NO_ID, "Error while retrieving Area No");
+            return S7PlcArea.fromValue(raw);
         } catch (KuraException e) {
             record.setChannelStatus(new ChannelStatus(ChannelFlag.FAILURE, e.getMessage(), e));
             record.setTimestamp(System.currentTimeMillis());
@@ -125,10 +137,11 @@ public final class S7PlcTaskBuilder {
     }
 
     public static Stream<Pair<S7PlcDomain, BlockTask>> build(List<ChannelRecord> records, Mode mode) {
-        return records.stream().map((record) -> {
+        return records.stream().map(record -> {
             try {
-                final int db = S7PlcTaskBuilder.getAreaNo(record);
-                return new Pair<>(new S7PlcDomain(db), build(record, mode));
+                final int db = S7PlcTaskBuilder.getDbNo(record);
+                final S7PlcArea area = S7PlcTaskBuilder.getAreaNo(record);
+                return new Pair<>(new S7PlcDomain(db, area), build(record, mode));
             } catch (Exception e) {
                 record.setTimestamp(System.currentTimeMillis());
                 record.setChannelStatus(new ChannelStatus(ChannelFlag.FAILURE, e.getMessage(), e));

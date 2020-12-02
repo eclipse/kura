@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Eurotech and/or its affiliates and others
+ * Copyright (c) 2017, 2020 Eurotech and/or its affiliates and others
  *
  *   All rights reserved. This program and the accompanying materials
  *   are made available under the terms of the Eclipse Public License v1.0
@@ -34,6 +34,8 @@ import org.eclipse.kura.internal.driver.s7plc.S7PlcDataType;
 import org.eclipse.kura.internal.driver.s7plc.S7PlcDomain;
 import org.eclipse.kura.type.DataType;
 import org.junit.Test;
+
+import Moka7.S7;
 
 public class S7PlcTaskBuilderTest {
 
@@ -126,6 +128,7 @@ public class S7PlcTaskBuilderTest {
 
         Map<String, Object> config = new HashMap<>();
         config.put("data.block.no", ord);
+        config.put("s7.area.type", S7.S7AreaDB);
         config.put("offset", ord);
         config.put("s7.data.type", type);
         config.put("bit.index", ord); // required for BOOL

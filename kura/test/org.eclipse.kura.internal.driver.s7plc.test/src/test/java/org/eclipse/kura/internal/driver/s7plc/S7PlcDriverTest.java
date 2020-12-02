@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2018 Eurotech and/or its affiliates and others
+ * Copyright (c) 2017, 2020 Eurotech and/or its affiliates and others
  *
  *   All rights reserved. This program and the accompanying materials
  *   are made available under the terms of the Eclipse Public License v1.0
@@ -33,6 +33,7 @@ import org.eclipse.kura.driver.block.BlockFactory;
 import org.eclipse.kura.driver.block.task.BlockTask;
 import org.eclipse.kura.driver.block.task.Mode;
 import org.eclipse.kura.driver.block.task.ToplevelBlockTask;
+import org.eclipse.kura.internal.driver.s7plc.S7PlcDriver.S7ClientState;
 import org.junit.Test;
 
 import Moka7.S7;
@@ -189,7 +190,7 @@ public class S7PlcDriverTest {
 
         S7Client s7Mock = mock(S7Client.class);
         S7PlcDriver svc = createTestDriver(s7Mock);
-
+        S7ClientState state = svc.createClientState(new S7PlcOptions(new HashMap<String, Object>()));
         when(s7Mock.SetSessionPassword(dec)).thenReturn(0);
 
         CryptoService csMock = mock(CryptoService.class);
@@ -201,7 +202,9 @@ public class S7PlcDriverTest {
         properties.put("password", pass);
         svc.updated(properties);
 
-        TestUtil.invokePrivate(svc, "authenticate");
+        TestUtil.invokePrivate(svc, "connect");
+        
+        
     }
 
     @Test
@@ -232,7 +235,7 @@ public class S7PlcDriverTest {
     public void testGetTaskFactoryForDomain() {
         S7PlcDriver svc = new S7PlcDriver();
 
-        S7PlcDomain domain = new S7PlcDomain(3);
+        S7PlcDomain domain = new S7PlcDomain(3, S7.S7AreaDB);
         Mode mode = Mode.READ;
         BlockFactory<ToplevelBlockTask> factory = svc.getTaskFactoryForDomain(domain, mode);
 

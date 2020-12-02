@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Eurotech and/or its affiliates and others
+ * Copyright (c) 2017, 2020 Eurotech and/or its affiliates and others
  *
  *   All rights reserved. This program and the accompanying materials
  *   are made available under the terms of the Eclipse Public License v1.0
@@ -26,15 +26,18 @@ public class S7PlcChannelDescriptorTest {
         List<Tad> result = (List<Tad>) descriptor.getDescriptor();
 
         assertNotNull(result);
-        assertEquals(5, result.size());
+        assertEquals(6, result.size());
 
         assertEquals("s7.data.type", result.get(0).getName());
         assertEquals(S7PlcDataType.values().length, result.get(0).getOption().size());
 
-        assertEquals("data.block.no", result.get(1).getName());
-        assertEquals("offset", result.get(2).getName());
-        assertEquals("byte.count", result.get(3).getName());
-        assertEquals("bit.index", result.get(4).getName());
+        assertEquals("s7.area.type", result.get(1).getName());
+        assertEquals(S7PlcArea.values().length, result.get(1).getOption().size());
+
+        assertEquals("data.block.no", result.get(2).getName());
+        assertEquals("offset", result.get(3).getName());
+        assertEquals("byte.count", result.get(4).getName());
+        assertEquals("bit.index", result.get(5).getName());
     }
 
 }
