@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Artemis Broker for Eclipse Kura
 Bundle-SymbolicName: org.eclipse.kura.broker.artemis.core
-Bundle-Version: 1.1.200.qualifier
+Bundle-Version: 5.0.0.qualifier
 Bundle-Vendor: Eclipse Kura
 Bundle-License: Eclipse Public License v2.0
 Bundle-ActivationPolicy: lazy

@@ -2,10 +2,10 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Localization Resources
 Bundle-SymbolicName: org.eclipse.kura.localization.resources;singleton:=true
-Bundle-Version: 1.0.500.qualifier
+Bundle-Version: 5.0.0.qualifier
 Bundle-Vendor: Eclipse Kura
 Bundle-License: Eclipse Public License v2.0
 Bundle-Category: Localization
-Fragment-Host: org.eclipse.kura.localization;bundle-version="[1.0,2.0)"
+Fragment-Host: org.eclipse.kura.localization;bundle-version="[5.0,6.0)"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: org.eclipse.kura.localization.resources;version="1.2.0"

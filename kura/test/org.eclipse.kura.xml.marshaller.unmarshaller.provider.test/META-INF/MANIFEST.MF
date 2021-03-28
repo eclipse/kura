@@ -5,7 +5,7 @@ Bundle-SymbolicName: org.eclipse.kura.xml.marshaller.unmarshaller.provider.test
 Bundle-Version: 5.0.0.qualifier
 Bundle-Vendor: Eclipse Kura
 Bundle-License: Eclipse Public License v2.0
-Fragment-Host: org.eclipse.kura.xml.marshaller.unmarshaller.provider;bundle-version="[1.0,2.0)"
+Fragment-Host: org.eclipse.kura.xml.marshaller.unmarshaller.provider;bundle-version="[5.0,6.0)"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: org.eclipse.kura;version="[1.4,2.0)",

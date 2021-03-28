@@ -27,7 +27,7 @@
 	</parent>
 
 	<artifactId>org.eclipse.kura.linux.usb.armv6hf</artifactId>
-	<version>1.0.600-SNAPSHOT</version>
+	<version>5.0.0-SNAPSHOT</version>
 	<packaging>eclipse-plugin</packaging>
 
 	<properties>

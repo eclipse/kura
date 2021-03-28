@@ -29,6 +29,6 @@
 	</properties>
 
 	<artifactId>org.eclipse.kura.rest.asset.provider</artifactId>
-	<version>1.0.400-SNAPSHOT</version>
+	<version>5.0.0-SNAPSHOT</version>
 	<packaging>eclipse-plugin</packaging>
 </project>

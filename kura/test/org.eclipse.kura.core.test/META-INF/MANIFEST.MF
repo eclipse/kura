@@ -45,6 +45,6 @@ Comment: org.eclipse.kura.emulator is needed as we need to start-up the emulator
 Require-Bundle: org.eclipse.equinox.io;bundle-version="1.0.400",
  org.junit;bundle-version="4.10.0",
  org.eclipse.kura.test;bundle-version="[5.0,6.0)",
- org.eclipse.kura.emulator;bundle-version="[0.7.1,2.0.0)",
+ org.eclipse.kura.emulator;bundle-version="[5.0,6.0)",
  moquette-broker
 Comment2: require moquette-broker. See https://bugs.eclipse.org/bugs/show_bug.cgi?id=485926

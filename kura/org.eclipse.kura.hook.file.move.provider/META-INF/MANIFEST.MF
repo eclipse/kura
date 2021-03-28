@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: File Move Deployment Hook Provider
 Bundle-SymbolicName: org.eclipse.kura.hook.file.move.provider;singleton:=true
-Bundle-Version: 1.0.400.qualifier
+Bundle-Version: 5.0.0.qualifier
 Bundle-Vendor: Eclipse Kura
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy

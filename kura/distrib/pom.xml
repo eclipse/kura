@@ -144,222 +144,222 @@
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.api</artifactId>
-                                    <version>${org.eclipse.kura.api.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.broker.artemis.core</artifactId>
-                                    <version>${org.eclipse.kura.broker.artemis.core.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.broker.artemis.simple.mqtt</artifactId>
-                                    <version>${org.eclipse.kura.broker.artemis.simple.mqtt.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.broker.artemis.xml</artifactId>
-                                    <version>${org.eclipse.kura.broker.artemis.xml.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.camel</artifactId>
-                                    <version>${org.eclipse.kura.camel.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.camel.cloud.factory</artifactId>
-                                    <version>${org.eclipse.kura.camel.cloud.factory.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.camel.xml</artifactId>
-                                    <version>${org.eclipse.kura.camel.xml.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.core</artifactId>
-                                    <version>${org.eclipse.kura.core.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.core.system</artifactId>
-                                    <version>${org.eclipse.kura.core.system.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.core.certificates</artifactId>
-                                    <version>${org.eclipse.kura.core.certificates.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.core.cloud</artifactId>
-                                    <version>${org.eclipse.kura.core.cloud.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.core.comm</artifactId>
-                                    <version>${org.eclipse.kura.core.comm.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.core.configuration</artifactId>
-                                    <version>${org.eclipse.kura.core.configuration.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.core.crypto</artifactId>
-                                    <version>${org.eclipse.kura.core.crypto.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.core.deployment</artifactId>
-                                    <version>${org.eclipse.kura.core.deployment.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.core.inventory</artifactId>
-                                    <version>${org.eclipse.kura.core.inventory.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.core.net</artifactId>
-                                    <version>${org.eclipse.kura.core.net.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.deployment.agent</artifactId>
-                                    <version>${org.eclipse.kura.deployment.agent.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.emulator</artifactId>
-                                    <version>${org.eclipse.kura.emulator.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.emulator.gpio</artifactId>
-                                    <version>${org.eclipse.kura.emulator.gpio.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.emulator.clock</artifactId>
-                                    <version>${org.eclipse.kura.emulator.clock.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.emulator.net</artifactId>
-                                    <version>${org.eclipse.kura.emulator.net.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.emulator.position</artifactId>
-                                    <version>${org.eclipse.kura.emulator.position.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.emulator.usb</artifactId>
-                                    <version>${org.eclipse.kura.emulator.usb.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.emulator.watchdog</artifactId>
-                                    <version>${org.eclipse.kura.emulator.watchdog.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.linux.clock</artifactId>
-                                    <version>${org.eclipse.kura.linux.clock.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.linux.command</artifactId>
-                                    <version>${org.eclipse.kura.linux.command.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.linux.net</artifactId>
-                                    <version>${org.eclipse.kura.linux.net.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.linux.sysv.provider</artifactId>
-                                    <version>${org.eclipse.kura.linux.sysv.provider.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.linux.systemd.provider</artifactId>
-                                    <version>${org.eclipse.kura.linux.systemd.provider.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.linux.debian.provider</artifactId>
-                                    <version>${org.eclipse.kura.linux.debian.provider.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.linux.redhat.provider</artifactId>
-                                    <version>${org.eclipse.kura.linux.redhat.provider.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.linux.position</artifactId>
-                                    <version>${org.eclipse.kura.linux.position.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.linux.usb</artifactId>
-                                    <version>${org.eclipse.kura.linux.usb.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.linux.usb.armv6hf</artifactId>
-                                    <version>${org.eclipse.kura.linux.usb.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.linux.usb.x86_64</artifactId>
-                                    <version>${org.eclipse.kura.linux.usb.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.linux.usb.aarch64</artifactId>
-                                    <version>${org.eclipse.kura.linux.usb.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.linux.bluetooth</artifactId>
-                                    <version>${org.eclipse.kura.linux.bluetooth.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.ble.provider</artifactId>
-                                    <version>${org.eclipse.kura.ble.provider.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.ble.ibeacon.provider</artifactId>
-                                    <version>${org.eclipse.kura.ble.ibeacon.provider.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.ble.eddystone.provider</artifactId>
-                                    <version>${org.eclipse.kura.ble.eddystone.provider.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.linux.watchdog</artifactId>
-                                    <version>${org.eclipse.kura.linux.watchdog.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.core.status</artifactId>
-                                    <version>${org.eclipse.kura.core.status.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.net.admin</artifactId>
-                                    <version>${org.eclipse.kura.net.admin.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
@@ -369,62 +369,62 @@
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.asset.provider</artifactId>
-                                    <version>${org.eclipse.kura.asset.provider.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.asset.cloudlet.provider</artifactId>
-                                    <version>${org.eclipse.kura.asset.cloudlet.provider.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.asset.helper.provider</artifactId>
-                                    <version>${org.eclipse.kura.asset.helper.provider.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.driver.helper.provider</artifactId>
-                                    <version>${org.eclipse.kura.driver.helper.provider.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.localization</artifactId>
-                                    <version>${org.eclipse.kura.localization.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.localization.resources</artifactId>
-                                    <version>${org.eclipse.kura.localization.resources.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.util</artifactId>
-                                    <version>${org.eclipse.kura.util.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.wire.h2db.component.provider</artifactId>
-                                    <version>${org.eclipse.kura.wire.h2db.component.provider.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.wire.camel</artifactId>
-                                    <version>${org.eclipse.kura.wire.camel.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.wire.component.provider</artifactId>
-                                    <version>${org.eclipse.kura.wire.component.provider.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.wire.helper.provider</artifactId>
-                                    <version>${org.eclipse.kura.wire.helper.provider.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.wire.provider</artifactId>
-                                    <version>${org.eclipse.kura.wire.provider.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
@@ -464,7 +464,7 @@
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.linux.gpio</artifactId>
-                                    <version>${org.eclipse.kura.linux.gpio.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
@@ -474,67 +474,67 @@
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.rest.provider</artifactId>
-                                    <version>${org.eclipse.kura.rest.provider.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.rest.asset.provider</artifactId>
-                                    <version>${org.eclipse.kura.rest.asset.provider.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.hook.file.move.provider</artifactId>
-                                    <version>${org.eclipse.kura.hook.file.move.provider.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.misc.cloudcat</artifactId>
-                                    <version>${org.eclipse.kura.misc.cloudcat.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.json.marshaller.unmarshaller.provider</artifactId>
-                                    <version>${org.eclipse.kura.json.marshaller.unmarshaller.provider.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.xml.marshaller.unmarshaller.provider</artifactId>
-                                    <version>${org.eclipse.kura.xml.marshaller.unmarshaller.provider.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.wire.component.conditional.provider</artifactId>
-                                    <version>${org.eclipse.kura.wire.component.conditional.provider.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.wire.component.join.provider</artifactId>
-                                    <version>${org.eclipse.kura.wire.component.join.provider.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.cloudconnection.eclipseiot.mqtt.provider</artifactId>
-                                    <version>${org.eclipse.kura.cloudconnection.eclipseiot.mqtt.provider.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.http.server.manager</artifactId>
-                                    <version>${org.eclipse.kura.http.server.manager.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.cloudconnection.raw.mqtt.provider</artifactId>
-                                    <version>${org.eclipse.kura.cloudconnection.raw.mqtt.provider.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.useradmin.store</artifactId>
-                                    <version>${org.eclipse.kura.useradmin.store.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.network.threat.manager</artifactId>
-                                    <version>${org.eclipse.kura.network.threat.manager.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                             </artifactItems>
                             <stripVersion>true</stripVersion>
@@ -553,7 +553,7 @@
                                 <artifactItem>
                                     <groupId>org.eclipse.kura</groupId>
                                     <artifactId>org.eclipse.kura.web2</artifactId>
-                                    <version>${org.eclipse.kura.web2.version}</version>
+                                    <version>${kura.version}</version>
                                 </artifactItem>
                             </artifactItems>
                             <stripVersion>true</stripVersion>
@@ -594,91 +594,91 @@
                         <configuration>
                             <tasks>
                                 <move file="target/plugins/org.eclipse.kura.api.jar"
-                                    tofile="target/plugins/org.eclipse.kura.api_${org.eclipse.kura.api.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.api_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.asset.provider.jar"
-                                    tofile="target/plugins/org.eclipse.kura.asset.provider_${org.eclipse.kura.asset.provider.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.asset.provider_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.asset.cloudlet.provider.jar"
-                                    tofile="target/plugins/org.eclipse.kura.asset.cloudlet.provider_${org.eclipse.kura.asset.cloudlet.provider.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.asset.cloudlet.provider_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.asset.helper.provider.jar"
-                                    tofile="target/plugins/org.eclipse.kura.asset.helper.provider_${org.eclipse.kura.asset.helper.provider.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.asset.helper.provider_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.broker.artemis.core.jar"
-                                    tofile="target/plugins/org.eclipse.kura.broker.artemis.core_${org.eclipse.kura.broker.artemis.core.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.broker.artemis.core_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.broker.artemis.simple.mqtt.jar"
-                                    tofile="target/plugins/org.eclipse.kura.broker.artemis.simple.mqtt_${org.eclipse.kura.broker.artemis.simple.mqtt.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.broker.artemis.simple.mqtt_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.broker.artemis.xml.jar"
-                                    tofile="target/plugins/org.eclipse.kura.broker.artemis.xml_${org.eclipse.kura.broker.artemis.xml.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.broker.artemis.xml_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.driver.helper.provider.jar"
-                                    tofile="target/plugins/org.eclipse.kura.driver.helper.provider_${org.eclipse.kura.driver.helper.provider.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.driver.helper.provider_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.camel.jar"
-                                    tofile="target/plugins/org.eclipse.kura.camel_${org.eclipse.kura.camel.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.camel_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.camel.cloud.factory.jar"
-                                    tofile="target/plugins/org.eclipse.kura.camel.cloud.factory_${org.eclipse.kura.camel.cloud.factory.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.camel.cloud.factory_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.camel.xml.jar"
-                                    tofile="target/plugins/org.eclipse.kura.camel.xml_${org.eclipse.kura.camel.xml.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.camel.xml_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.core.jar"
-                                    tofile="target/plugins/org.eclipse.kura.core_${org.eclipse.kura.core.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.core_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.core.system.jar"
-                                    tofile="target/plugins/org.eclipse.kura.core.system_${org.eclipse.kura.core.system.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.core.system_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.core.certificates.jar"
-                                    tofile="target/plugins/org.eclipse.kura.core.certificates_${org.eclipse.kura.core.certificates.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.core.certificates_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.core.cloud.jar"
-                                    tofile="target/plugins/org.eclipse.kura.core.cloud_${org.eclipse.kura.core.cloud.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.core.cloud_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.core.comm.jar"
-                                    tofile="target/plugins/org.eclipse.kura.core.comm_${org.eclipse.kura.core.comm.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.core.comm_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.core.configuration.jar"
-                                    tofile="target/plugins/org.eclipse.kura.core.configuration_${org.eclipse.kura.core.configuration.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.core.configuration_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.core.crypto.jar"
-                                    tofile="target/plugins/org.eclipse.kura.core.crypto_${org.eclipse.kura.core.crypto.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.core.crypto_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.core.deployment.jar"
-                                    tofile="target/plugins/org.eclipse.kura.core.deployment_${org.eclipse.kura.core.deployment.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.core.deployment_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.core.inventory.jar"
-                                    tofile="target/plugins/org.eclipse.kura.core.inventory_${org.eclipse.kura.core.inventory.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.core.inventory_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.core.net.jar"
-                                    tofile="target/plugins/org.eclipse.kura.core.net_${org.eclipse.kura.core.net.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.core.net_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.deployment.agent.jar"
-                                    tofile="target/plugins/org.eclipse.kura.deployment.agent_${org.eclipse.kura.deployment.agent.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.deployment.agent_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.linux.clock.jar"
-                                    tofile="target/plugins/org.eclipse.kura.linux.clock_${org.eclipse.kura.linux.clock.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.linux.clock_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.linux.command.jar"
-                                    tofile="target/plugins/org.eclipse.kura.linux.command_${org.eclipse.kura.linux.command.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.linux.command_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.linux.net.jar"
-                                    tofile="target/plugins/org.eclipse.kura.linux.net_${org.eclipse.kura.linux.net.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.linux.net_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.linux.sysv.provider.jar"
-                                    tofile="target/plugins/org.eclipse.kura.linux.sysv.provider_${org.eclipse.kura.linux.sysv.provider.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.linux.sysv.provider_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.linux.systemd.provider.jar"
-                                    tofile="target/plugins/org.eclipse.kura.linux.systemd.provider_${org.eclipse.kura.linux.systemd.provider.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.linux.systemd.provider_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.linux.debian.provider.jar"
-                                    tofile="target/plugins/org.eclipse.kura.linux.debian.provider_${org.eclipse.kura.linux.debian.provider.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.linux.debian.provider_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.linux.redhat.provider.jar"
-                                    tofile="target/plugins/org.eclipse.kura.linux.redhat.provider_${org.eclipse.kura.linux.redhat.provider.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.linux.redhat.provider_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.linux.position.jar"
-                                    tofile="target/plugins/org.eclipse.kura.linux.position_${org.eclipse.kura.linux.position.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.linux.position_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.linux.usb.jar"
-                                    tofile="target/plugins/org.eclipse.kura.linux.usb_${org.eclipse.kura.linux.usb.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.linux.usb_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.linux.usb.armv6hf.jar"
-                                    tofile="target/plugins/org.eclipse.kura.linux.usb.armv6hf_${org.eclipse.kura.linux.usb.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.linux.usb.armv6hf_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.linux.usb.x86_64.jar"
-                                    tofile="target/plugins/org.eclipse.kura.linux.usb.x86_64_${org.eclipse.kura.linux.usb.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.linux.usb.x86_64_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.linux.usb.aarch64.jar"
-                                    tofile="target/plugins/org.eclipse.kura.linux.usb.aarch64_${org.eclipse.kura.linux.usb.version}.jar"/>
+                                    tofile="target/plugins/org.eclipse.kura.linux.usb.aarch64_${kura.version}.jar"/>
                                 <move file="target/plugins/org.eclipse.kura.linux.bluetooth.jar"
-                                    tofile="target/plugins/org.eclipse.kura.linux.bluetooth_${org.eclipse.kura.linux.bluetooth.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.linux.bluetooth_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.ble.provider.jar"
-                                    tofile="target/plugins/org.eclipse.kura.ble.provider_${org.eclipse.kura.ble.provider.version}.jar"/>
+                                    tofile="target/plugins/org.eclipse.kura.ble.provider_${kura.version}.jar"/>
                                 <move file="target/plugins/org.eclipse.kura.ble.ibeacon.provider.jar"
-                                    tofile="target/plugins/org.eclipse.kura.ble.ibeacon.provider_${org.eclipse.kura.ble.ibeacon.provider.version}.jar"/>
+                                    tofile="target/plugins/org.eclipse.kura.ble.ibeacon.provider_${kura.version}.jar"/>
                                 <move file="target/plugins/org.eclipse.kura.ble.eddystone.provider.jar"
-                                    tofile="target/plugins/org.eclipse.kura.ble.eddystone.provider_${org.eclipse.kura.ble.eddystone.provider.version}.jar"/>
+                                    tofile="target/plugins/org.eclipse.kura.ble.eddystone.provider_${kura.version}.jar"/>
                                 <move file="target/plugins/org.eclipse.kura.linux.watchdog.jar"
-                                    tofile="target/plugins/org.eclipse.kura.linux.watchdog_${org.eclipse.kura.linux.watchdog.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.linux.watchdog_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.localization.jar"
-                                    tofile="target/plugins/org.eclipse.kura.localization_${org.eclipse.kura.localization.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.localization_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.localization.resources.jar"
-                                    tofile="target/plugins/org.eclipse.kura.localization.resources_${org.eclipse.kura.localization.resources.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.localization.resources_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.core.status.jar"
-                                    tofile="target/plugins/org.eclipse.kura.core.status_${org.eclipse.kura.core.status.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.core.status_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.net.admin.jar"
-                                    tofile="target/plugins/org.eclipse.kura.net.admin_${org.eclipse.kura.net.admin.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.net.admin_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.protocol.modbus.jar"
                                     tofile="target/plugins/org.eclipse.kura.protocol.modbus_${org.eclipse.kura.protocol.modbus.version}.jar"
                                     failonerror="false" />
@@ -686,36 +686,36 @@
                                     tofile="target/plugins/org.eclipse.kura.protocol.can_${org.eclipse.kura.protocol.can.version}.jar"
                                     failonerror="false" />
                                 <move file="target/plugins/org.eclipse.kura.util.jar"
-                                    tofile="target/plugins/org.eclipse.kura.util_${org.eclipse.kura.util.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.util_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.web2.jar"
-                                    tofile="target/plugins/org.eclipse.kura.web2_${org.eclipse.kura.web2.version}.jar"
+                                    tofile="target/plugins/org.eclipse.kura.web2_${kura.version}.jar"
                                     failonerror="false" />
                                 <move file="target/plugins/org.eclipse.kura.linux.gpio.jar"
-                                    tofile="target/plugins/org.eclipse.kura.linux.gpio_${org.eclipse.kura.linux.gpio.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.linux.gpio_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.emulator.jar"
-                                    tofile="target/plugins/org.eclipse.kura.emulator_${org.eclipse.kura.emulator.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.emulator_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.emulator.clock.jar"
-                                    tofile="target/plugins/org.eclipse.kura.emulator.clock_${org.eclipse.kura.emulator.clock.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.emulator.clock_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.emulator.gpio.jar"
-                                    tofile="target/plugins/org.eclipse.kura.emulator.gpio_${org.eclipse.kura.emulator.gpio.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.emulator.gpio_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.emulator.net.jar"
-                                    tofile="target/plugins/org.eclipse.kura.emulator.net_${org.eclipse.kura.emulator.net.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.emulator.net_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.emulator.position.jar"
-                                    tofile="target/plugins/org.eclipse.kura.emulator.position_${org.eclipse.kura.emulator.position.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.emulator.position_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.emulator.usb.jar"
-                                    tofile="target/plugins/org.eclipse.kura.emulator.usb_${org.eclipse.kura.emulator.usb.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.emulator.usb_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.emulator.watchdog.jar"
-                                    tofile="target/plugins/org.eclipse.kura.emulator.watchdog_${org.eclipse.kura.emulator.watchdog.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.emulator.watchdog_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.wire.h2db.component.provider.jar"
-                                    tofile="target/plugins/org.eclipse.kura.wire.h2db.component.provider_${org.eclipse.kura.wire.h2db.component.provider.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.wire.h2db.component.provider_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.wire.camel.jar"
-                                    tofile="target/plugins/org.eclipse.kura.wire.camel_${org.eclipse.kura.wire.camel.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.wire.camel_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.wire.component.provider.jar"
-                                    tofile="target/plugins/org.eclipse.kura.wire.component.provider_${org.eclipse.kura.wire.component.provider.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.wire.component.provider_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.wire.helper.provider.jar"
-                                    tofile="target/plugins/org.eclipse.kura.wire.helper.provider_${org.eclipse.kura.wire.helper.provider.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.wire.helper.provider_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.wire.provider.jar"
-                                    tofile="target/plugins/org.eclipse.kura.wire.provider_${org.eclipse.kura.wire.provider.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.wire.provider_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.driver.opcua.provider.jar"
                                     tofile="target/plugins/org.eclipse.kura.driver.opcua.provider_${org.eclipse.kura.driver.opcua.provider.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.driver.s7plc.provider.jar"
@@ -733,31 +733,31 @@
                                 <move file="target/plugins/org.moka7.jar"
                                     tofile="target/plugins/org.moka7_${org.moka7.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.rest.provider.jar"
-                                    tofile="target/plugins/org.eclipse.kura.rest.provider_${org.eclipse.kura.rest.provider.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.rest.provider_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.rest.asset.provider.jar"
-                                    tofile="target/plugins/org.eclipse.kura.rest.asset.provider_${org.eclipse.kura.rest.asset.provider.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.rest.asset.provider_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.hook.file.move.provider.jar"
-                                    tofile="target/plugins/org.eclipse.kura.hook.file.move.provider_${org.eclipse.kura.hook.file.move.provider.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.hook.file.move.provider_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.misc.cloudcat.jar"
-                                    tofile="target/plugins/org.eclipse.kura.misc.cloudcat_${org.eclipse.kura.misc.cloudcat.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.misc.cloudcat_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.json.marshaller.unmarshaller.provider.jar"
-                                    tofile="target/plugins/org.eclipse.kura.json.marshaller.unmarshaller.provider_${org.eclipse.kura.json.marshaller.unmarshaller.provider.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.json.marshaller.unmarshaller.provider_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.xml.marshaller.unmarshaller.provider.jar"
-                                    tofile="target/plugins/org.eclipse.kura.xml.marshaller.unmarshaller.provider_${org.eclipse.kura.xml.marshaller.unmarshaller.provider.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.xml.marshaller.unmarshaller.provider_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.wire.component.conditional.provider.jar"
-                                    tofile="target/plugins/org.eclipse.kura.wire.component.conditional.provider_${org.eclipse.kura.wire.component.conditional.provider.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.wire.component.conditional.provider_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.wire.component.join.provider.jar"
-                                    tofile="target/plugins/org.eclipse.kura.wire.component.join.provider_${org.eclipse.kura.wire.component.join.provider.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.wire.component.join.provider_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.cloudconnection.eclipseiot.mqtt.provider.jar"
-                                    tofile="target/plugins/org.eclipse.kura.cloudconnection.eclipseiot.mqtt.provider_${org.eclipse.kura.cloudconnection.eclipseiot.mqtt.provider.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.cloudconnection.eclipseiot.mqtt.provider_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.http.server.manager.jar"
-                                    tofile="target/plugins/org.eclipse.kura.http.server.manager_${org.eclipse.kura.http.server.manager.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.http.server.manager_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.cloudconnection.raw.mqtt.provider.jar"
-                                    tofile="target/plugins/org.eclipse.kura.cloudconnection.raw.mqtt.provider_${org.eclipse.kura.cloudconnection.raw.mqtt.provider.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.cloudconnection.raw.mqtt.provider_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.useradmin.store.jar"
-                                    tofile="target/plugins/org.eclipse.kura.useradmin.store_${org.eclipse.kura.useradmin.store.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.useradmin.store_${kura.version}.jar" />
                                 <move file="target/plugins/org.eclipse.kura.network.threat.manager.jar"
-                                    tofile="target/plugins/org.eclipse.kura.network.threat.manager_${org.eclipse.kura.network.threat.manager.version}.jar" />
+                                    tofile="target/plugins/org.eclipse.kura.network.threat.manager_${kura.version}.jar" />
                             </tasks>
                         </configuration>
                     </execution>
@@ -1788,22 +1788,22 @@
                                         </copy>
                                         <!-- Add individual emulator bundles-->
                                         <copy
-                                            file="${project.build.directory}/plugins/org.eclipse.kura.emulator.clock_${org.eclipse.kura.emulator.clock.version}.jar"
+                                            file="${project.build.directory}/plugins/org.eclipse.kura.emulator.clock_${kura.version}.jar"
                                             todir="${project.build.directory}/staging/target-definition/equinox_3.16.0/repository/plugins" />
                                         <copy
-                                            file="${project.build.directory}/plugins/org.eclipse.kura.emulator.gpio_${org.eclipse.kura.emulator.gpio.version}.jar"
+                                            file="${project.build.directory}/plugins/org.eclipse.kura.emulator.gpio_${kura.version}.jar"
                                             todir="${project.build.directory}/staging/target-definition/equinox_3.16.0/repository/plugins" />
                                         <copy
-                                            file="${project.build.directory}/plugins/org.eclipse.kura.emulator.net_${org.eclipse.kura.emulator.net.version}.jar"
+                                            file="${project.build.directory}/plugins/org.eclipse.kura.emulator.net_${kura.version}.jar"
                                             todir="${project.build.directory}/staging/target-definition/equinox_3.16.0/repository/plugins" />
                                         <copy
-                                            file="${project.build.directory}/plugins/org.eclipse.kura.emulator.position_${org.eclipse.kura.emulator.position.version}.jar"
+                                            file="${project.build.directory}/plugins/org.eclipse.kura.emulator.position_${kura.version}.jar"
                                             todir="${project.build.directory}/staging/target-definition/equinox_3.16.0/repository/plugins" />
                                         <copy
-                                            file="${project.build.directory}/plugins/org.eclipse.kura.emulator.usb_${org.eclipse.kura.emulator.usb.version}.jar"
+                                            file="${project.build.directory}/plugins/org.eclipse.kura.emulator.usb_${kura.version}.jar"
                                             todir="${project.build.directory}/staging/target-definition/equinox_3.16.0/repository/plugins" />
                                         <copy
-                                            file="${project.build.directory}/plugins/org.eclipse.kura.emulator.watchdog_${org.eclipse.kura.emulator.watchdog.version}.jar"
+                                            file="${project.build.directory}/plugins/org.eclipse.kura.emulator.watchdog_${kura.version}.jar"
                                             todir="${project.build.directory}/staging/target-definition/equinox_3.16.0/repository/plugins" />
 
                                         <delete file="${project.build.directory}/staging/target-definition/pom.xml" />
@@ -1822,140 +1822,140 @@
                                             file="src/main/resources/common/projects/target_definition.project" tofile="${project.build.directory}/staging/target-definition/.project" />
                                         <copy file="src/main/resources/common/kura-equinox_3.16.0.target" todir="${project.build.directory}/staging/target-definition" />
                                         <copy
-                                            file="${project.build.directory}/plugins/org.eclipse.kura.api_${org.eclipse.kura.api.version}.jar"
+                                            file="${project.build.directory}/plugins/org.eclipse.kura.api_${kura.version}.jar"
                                             todir="${project.build.directory}/staging/target-definition/equinox_3.16.0/repository/plugins" />
                                         <copy
-                                            file="${project.build.directory}/plugins/org.eclipse.kura.camel_${org.eclipse.kura.camel.version}.jar"
+                                            file="${project.build.directory}/plugins/org.eclipse.kura.camel_${kura.version}.jar"
                                             todir="${project.build.directory}/staging/target-definition/equinox_3.16.0/repository/plugins" />
                                         <copy
-                                            file="${project.build.directory}/plugins/org.eclipse.kura.camel.cloud.factory_${org.eclipse.kura.camel.cloud.factory.version}.jar"
+                                            file="${project.build.directory}/plugins/org.eclipse.kura.camel.cloud.factory_${kura.version}.jar"
                                             todir="${project.build.directory}/staging/target-definition/equinox_3.16.0/repository/plugins" />
                                         <copy
-                                            file="${project.build.directory}/plugins/org.eclipse.kura.camel.xml_${org.eclipse.kura.camel.xml.version}.jar"
+                                            file="${project.build.directory}/plugins/org.eclipse.kura.camel.xml_${kura.version}.jar"
                                             todir="${project.build.directory}/staging/target-definition/equinox_3.16.0/repository/plugins" />
                                         <copy
-                                            file="${project.build.directory}/plugins/org.eclipse.kura.core_${org.eclipse.kura.core.version}.jar"
+                                            file="${project.build.directory}/plugins/org.eclipse.kura.core_${kura.version}.jar"
                                             todir="${project.build.directory}/staging/target-definition/equinox_3.16.0/repository/plugins" />
                                         <copy
-                                            file="${project.build.directory}/plugins/org.eclipse.kura.core.certificates_${org.eclipse.kura.core.certificates.version}.jar"
+                                            file="${project.build.directory}/plugins/org.eclipse.kura.core.certificates_${kura.version}.jar"
                                             todir="${project.build.directory}/staging/target-definition/equinox_3.16.0/repository/plugins" />
                                         <copy
-                                            file="${project.build.directory}/plugins/org.eclipse.kura.core.cloud_${org.eclipse.kura.core.cloud.version}.jar"
+                                            file="${project.build.directory}/plugins/org.eclipse.kura.core.cloud_${kura.version}.jar"
                                             todir="${project.build.directory}/staging/target-definition/equinox_3.16.0/repository/plugins" />
                                         <copy
-                                            file="${project.build.directory}/plugins/org.eclipse.kura.core.comm_${org.eclipse.kura.core.comm.version}.jar"
+                                            file="${project.build.directory}/plugins/org.eclipse.kura.core.comm_${kura.version}.jar"
                                             todir="${project.build.directory}/staging/target-definition/equinox_3.16.0/repository/plugins" />
                                         <copy
-                                            file="${project.build.directory}/plugins/org.eclipse.kura.core.configuration_${org.eclipse.kura.core.configuration.version}.jar"
+                                            file="${project.build.directory}/plugins/org.eclipse.kura.core.configuration_${kura.version}.jar"
                                             todir="${project.build.directory}/staging/target-definition/equinox_3.16.0/repository/plugins" />
                                         <copy
-                                            file="${project.build.directory}/plugins/org.eclipse.kura.core.crypto_${org.eclipse.kura.core.crypto.version}.jar"
+                                            file="${project.build.directory}/plugins/org.eclipse.kura.core.crypto_${kura.version}.jar"
                                             todir="${project.build.directory}/staging/target-definition/equinox_3.16.0/repository/plugins" />
                                         <copy
-                                            file="${project.build.directory}/plugins/org.eclipse.kura.core.deployment_${org.eclipse.kura.core.deployment.version}.jar"
+                                            file="${project.build.directory}/plugins/org.eclipse.kura.core.deployment_${kura.version}.jar"
                                             todir="${project.build.directory}/staging/target-definition/equinox_3.16.0/repository/plugins" />
                                         <copy
-                                            file="${project.build.directory}/plugins/org.eclipse.kura.core.inventory_${org.eclipse.kura.core.inventory.version}.jar"
+                                            file="${project.build.directory}/plugins/org.eclipse.kura.core.inventory_${kura.version}.jar"
                                             todir="${project.build.directory}/staging/target-definition/equinox_3.16.0/repository/plugins" />
                                         <copy
-                                            file="${project.build.directory}/plugins/org.eclipse.kura.core.net_${org.eclipse.kura.core.net.version}.jar"
+                                            file="${project.build.directory}/plugins/org.eclipse.kura.core.net_${kura.version}.jar"
                                             todir="${project.build.directory}/staging/target-definition/equinox_3.16.0/repository/plugins" />
                                         <copy
-                                            file="${project.build.directory}/plugins/org.eclipse.kura.deployment.agent_${org.eclipse.kura.deployment.agent.version}.jar"
+                                            file="${project.build.directory}/plugins/org.eclipse.kura.deployment.agent_${kura.version}.jar"
                                             todir="${project.build.directory}/staging/target-definition/equinox_3.16.0/repository/plugins" />
                                         <copy
-                                            file="${project.build.directory}/plugins/org.eclipse.kura.core.status_${org.eclipse.kura.core.status.version}.jar"
+                                            file="${project.build.directory}/plugins/org.eclipse.kura.core.status_${kura.version}.jar"
                                             todir="${project.build.directory}/staging/target-definition/equinox_3.16.0/repository/plugins" />
                                         <copy
-                                            file="${project.build.directory}/plugins/org.eclipse.kura.linux.bluetooth_${org.eclipse.kura.linux.bluetooth.version}.jar"
+                                            file="${project.build.directory}/plugins/org.eclipse.kura.linux.bluetooth_${kura.version}.jar"
                                             todir="${project.build.directory}/staging/target-definition/equinox_3.16.0/repository/plugins" />
                                         <copy
-                                            file="${project.build.directory}/plugins/org.eclipse.kura.ble.provider_${org.eclipse.kura.ble.provider.version}.jar"
+                                            file="${project.build.directory}/plugins/org.eclipse.kura.ble.provider_${kura.version}.jar"
                                             todir="${project.build.directory}/staging/target-definition/equinox_3.16.0/repository/plugins" />
                                         <copy
-                                            file="${project.build.directory}/plugins/org.eclipse.kura.ble.ibeacon.provider_${org.eclipse.kura.ble.ibeacon.provider.version}.jar"
+                                            file="${project.build.directory}/plugins/org.eclipse.kura.ble.ibeacon.provider_${kura.version}.jar"
                                             todir="${project.build.directory}/staging/target-definition/equinox_3.16.0/repository/plugins" />
                                         <copy
-                                            file="${project.build.directory}/plugins/org.eclipse.kura.ble.eddystone.provider_${org.eclipse.kura.ble.eddystone.provider.version}.jar"
+                                            file="${project.build.directory}/plugins/org.eclipse.kura.ble.eddystone.provider_${kura.version}.jar"
                                             todir="${project.build.directory}/staging/target-definition/equinox_3.16.0/repository/plugins" />
                                         <copy
-                                            file="${project.build.directory}/plugins/org.eclipse.kura.asset.provider_${org.eclipse.kura.asset.provider.version}.jar"
+                                            file="${project.build.directory}/plugins/org.eclipse.kura.asset.provider_${kura.version}.jar"
                                             todir="${project.build.directory}/staging/target-definition/equinox_3.16.0/repository/plugins" />
                                         <copy
-                                            file="${project.build.directory}/plugins/org.eclipse.kura.asset.cloudlet.provider_${org.eclipse.kura.asset.cloudlet.provider.version}.jar"
+                                            file="${project.build.directory}/plugins/org.eclipse.kura.asset.cloudlet.provider_${kura.version}.jar"
                                             todir="${project.build.directory}/staging/target-definition/equinox_3.16.0/repository/plugins" />
                                         <copy
-                                            file="${project.build.directory}/plugins/org.eclipse.kura.asset.helper.provider_${org.eclipse.kura.asset.helper.provider.version}.jar"
+                                            file="${project.build.directory}/plugins/org.eclipse.kura.asset.helper.provider_${kura.version}.jar"
                                             todir="${project.build.directory}/staging/target-definition/equinox_3.16.0/repository/plugins" />
                                         <copy
-                                            file="${project.build.directory}/plugins/org.eclipse.kura.driver.helper.provider_${org.eclipse.kura.driver.helper.provider.version}.jar"
+                                            file="${project.build.directory}/plugins/org.eclipse.kura.driver.helper.provider_${kura.version}.jar"
                                             todir="${project.build.directory}/staging/target-definition/equinox_3.16.0/repository/plugins" />
                                         <copy
-                                            file="${project.build.directory}/plugins/org.eclipse.kura.localization_${org.eclipse.kura.localization.version}.jar"
+                                            file="${project.build.directory}/plugins/org.eclipse.kura.localization_${kura.version}.jar"
                                             todir="${project.build.directory}/staging/target-definition/equinox_3.16.0/repository/plugins" />
                                         <copy
-                                            file="${project.build.directory}/plugins/org.eclipse.kura.localization.resources_${org.eclipse.kura.localization.resources.version}.jar"
+                                            file="${project.build.directory}/plugins/org.eclipse.kura.localization.resources_${kura.version}.jar"
                                             todir="${project.build.directory}/staging/target-definition/equinox_3.16.0/repository/plugins" />
                                         <copy
-                                            file="${project.build.directory}/plugins/org.eclipse.kura.util_${org.eclipse.kura.util.version}.jar"
+                                            file="${project.build.directory}/plugins/org.eclipse.kura.util_${kura.version}.jar"
                                             todir="${project.build.directory}/staging/target-definition/equinox_3.16.0/repository/plugins" />
                                         <copy
-                                            file="${project.build.directory}/plugins/org.eclipse.kura.wire.camel_${org.eclipse.kura.wire.camel.version}.jar"
+                                            file="${project.build.directory}/plugins/org.eclipse.kura.wire.camel_${kura.version}.jar"
                                             todir="${project.build.directory}/staging/target-definition/equinox_3.16.0/repository/plugins" />
                                         <copy
-                                            file="${project.build.directory}/plugins/org.eclipse.kura.wire.component.provider_${org.eclipse.kura.wire.component.provider.version}.jar"
+                                            file="${project.build.directory}/plugins/org.eclipse.kura.wire.component.provider_${kura.version}.jar"
                                             todir="${project.build.directory}/staging/target-definition/equinox_3.16.0/repository/plugins" />
                                         <copy
-                                            file="${project.build.directory}/plugins/org.eclipse.kura.wire.h2db.component.provider_${org.eclipse.kura.wire.h2db.component.provider.version}.jar"
+                                            file="${project.build.directory}/plugins/org.eclipse.kura.wire.h2db.component.provider_${kura.version}.jar"
                                             todir="${project.build.directory}/staging/target-definition/equinox_3.16.0/repository/plugins" />
                                         <copy
-                                            file="${project.build.directory}/plugins/org.eclipse.kura.wire.helper.provider_${org.eclipse.kura.wire.helper.provider.version}.jar"
+                                            file="${project.build.directory}/plugins/org.eclipse.kura.wire.helper.provider_${kura.version}.jar"
                                             todir="${project.build.directory}/staging/target-definition/equinox_3.16.0/repository/plugins" />
                                         <copy
-                                            file="${project.build.directory}/plugins/org.eclipse.kura.wire.provider_${org.eclipse.kura.wire.provider.version}.jar"
+                                            file="${project.build.directory}/plugins/org.eclipse.kura.wire.provider_${kura.version}.jar"
                                             todir="${project.build.directory}/staging/target-definition/equinox_3.16.0/repository/plugins" />
                                         <copy
-                                            file="${project.build.directory}/plugins/org.eclipse.kura.web2_${org.eclipse.kura.web2.version}.jar"
+                                            file="${project.build.directory}/plugins/org.eclipse.kura.web2_${kura.version}.jar"
                                             todir="${project.build.directory}/staging/target-definition/equinox_3.16.0/repository/plugins"
                                             failonerror="false" />
                                         <!-- Add REST bundles-->
                                         <copy
-                                            file="${project.build.directory}/plugins/org.eclipse.kura.rest.provider_${org.eclipse.kura.rest.provider.version}.jar"
+                                            file="${project.build.directory}/plugins/org.eclipse.kura.rest.provider_${kura.version}.jar"
                                             todir="${project.build.directory}/staging/target-definition/equinox_3.16.0/repository/plugins" />
                                         <copy
-                                            file="${project.build.directory}/plugins/org.eclipse.kura.rest.asset.provider_${org.eclipse.kura.rest.asset.provider.version}.jar"
+                                            file="${project.build.directory}/plugins/org.eclipse.kura.rest.asset.provider_${kura.version}.jar"
                                             todir="${project.build.directory}/staging/target-definition/equinox_3.16.0/repository/plugins" />
                                         <!-- Add Artemis bundles-->
                                         <copy
-                                            file="${project.build.directory}/plugins/org.eclipse.kura.broker.artemis.core_${org.eclipse.kura.broker.artemis.core.version}.jar"
+                                            file="${project.build.directory}/plugins/org.eclipse.kura.broker.artemis.core_${kura.version}.jar"
                                             todir="${project.build.directory}/staging/target-definition/equinox_3.16.0/repository/plugins" />
                                         <copy
-                                            file="${project.build.directory}/plugins/org.eclipse.kura.broker.artemis.simple.mqtt_${org.eclipse.kura.broker.artemis.simple.mqtt.version}.jar"
+                                            file="${project.build.directory}/plugins/org.eclipse.kura.broker.artemis.simple.mqtt_${kura.version}.jar"
                                             todir="${project.build.directory}/staging/target-definition/equinox_3.16.0/repository/plugins" />
                                         <copy
-                                            file="${project.build.directory}/plugins/org.eclipse.kura.broker.artemis.xml_${org.eclipse.kura.broker.artemis.xml.version}.jar"
-                                            todir="${project.build.directory}/staging/target-definition/equinox_3.16.0/repository/plugins" />
-
-                                        <copy
-                                            file="${project.build.directory}/plugins/org.eclipse.kura.wire.component.conditional.provider_${org.eclipse.kura.wire.component.conditional.provider.version}.jar"
-                                            todir="${project.build.directory}/staging/target-definition/equinox_3.16.0/repository/plugins" />
-                                        <copy
-                                            file="${project.build.directory}/plugins/org.eclipse.kura.wire.component.join.provider_${org.eclipse.kura.wire.component.join.provider.version}.jar"
+                                            file="${project.build.directory}/plugins/org.eclipse.kura.broker.artemis.xml_${kura.version}.jar"
                                             todir="${project.build.directory}/staging/target-definition/equinox_3.16.0/repository/plugins" />
 
                                         <copy
-                                            file="${project.build.directory}/plugins/org.eclipse.kura.json.marshaller.unmarshaller.provider_${org.eclipse.kura.json.marshaller.unmarshaller.provider.version}.jar"
+                                            file="${project.build.directory}/plugins/org.eclipse.kura.wire.component.conditional.provider_${kura.version}.jar"
                                             todir="${project.build.directory}/staging/target-definition/equinox_3.16.0/repository/plugins" />
                                         <copy
-                                            file="${project.build.directory}/plugins/org.eclipse.kura.xml.marshaller.unmarshaller.provider_${org.eclipse.kura.xml.marshaller.unmarshaller.provider.version}.jar"
-                                            todir="${project.build.directory}/staging/target-definition/equinox_3.16.0/repository/plugins" />
-
-                                        <copy
-                                            file="${project.build.directory}/plugins/org.eclipse.kura.cloudconnection.eclipseiot.mqtt.provider_${org.eclipse.kura.cloudconnection.eclipseiot.mqtt.provider.version}.jar"
+                                            file="${project.build.directory}/plugins/org.eclipse.kura.wire.component.join.provider_${kura.version}.jar"
                                             todir="${project.build.directory}/staging/target-definition/equinox_3.16.0/repository/plugins" />
 
                                         <copy
-                                            file="${project.build.directory}/plugins/org.eclipse.kura.cloudconnection.raw.mqtt.provider_${org.eclipse.kura.cloudconnection.raw.mqtt.provider.version}.jar"
+                                            file="${project.build.directory}/plugins/org.eclipse.kura.json.marshaller.unmarshaller.provider_${kura.version}.jar"
+                                            todir="${project.build.directory}/staging/target-definition/equinox_3.16.0/repository/plugins" />
+                                        <copy
+                                            file="${project.build.directory}/plugins/org.eclipse.kura.xml.marshaller.unmarshaller.provider_${kura.version}.jar"
+                                            todir="${project.build.directory}/staging/target-definition/equinox_3.16.0/repository/plugins" />
+
+                                        <copy
+                                            file="${project.build.directory}/plugins/org.eclipse.kura.cloudconnection.eclipseiot.mqtt.provider_${kura.version}.jar"
+                                            todir="${project.build.directory}/staging/target-definition/equinox_3.16.0/repository/plugins" />
+
+                                        <copy
+                                            file="${project.build.directory}/plugins/org.eclipse.kura.cloudconnection.raw.mqtt.provider_${kura.version}.jar"
                                             todir="${project.build.directory}/staging/target-definition/equinox_3.16.0/repository/plugins" />
                                     </target>
                                 </configuration>

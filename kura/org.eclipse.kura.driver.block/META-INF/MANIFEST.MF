@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: org.eclipse.kura.driver.block
 Bundle-SymbolicName: org.eclipse.kura.driver.block
-Bundle-Version: 1.0.400.qualifier
+Bundle-Version: 5.0.0.qualifier
 Bundle-Vendor: Eclipse Kura
 Import-Package: org.eclipse.kura;version="[1.2, 2.0)",
  org.eclipse.kura.channel;version="[1.0, 2.0)",

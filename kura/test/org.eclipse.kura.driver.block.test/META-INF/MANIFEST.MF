@@ -9,4 +9,4 @@ Bundle-ClassPath: .
 Bundle-ActivationPolicy: lazy
 Import-Package: org.junit;version="4.12.0",
  org.junit.runners;version="4.12.0"
-Fragment-Host: org.eclipse.kura.driver.block;bundle-version="1.0.400"
+Fragment-Host: org.eclipse.kura.driver.block;bundle-version="5.0.0"

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: org.eclipse.kura.core.certificates
 Bundle-SymbolicName: org.eclipse.kura.core.certificates;singleton:=true
-Bundle-Version: 1.0.600.qualifier
+Bundle-Version: 5.0.0.qualifier
 Bundle-Vendor: Eclipse Kura
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: org.eclipse.kura;version="[1.0,2.0)",

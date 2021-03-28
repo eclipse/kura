@@ -25,7 +25,7 @@
 	</parent>
 
 	<artifactId>org.eclipse.kura.core.deployment</artifactId>
-	<version>1.1.600-SNAPSHOT</version>
+	<version>5.0.0-SNAPSHOT</version>
 	<packaging>eclipse-plugin</packaging>
 
 	<properties>

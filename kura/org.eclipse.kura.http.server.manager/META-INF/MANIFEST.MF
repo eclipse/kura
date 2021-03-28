@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: org.eclipse.kura.http.server.manager
 Bundle-SymbolicName: org.eclipse.kura.http.server.manager
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 5.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Service-Component: OSGI-INF/*.xml
 Import-Package: org.eclipse.equinox.http.jetty;version="1.5.0",

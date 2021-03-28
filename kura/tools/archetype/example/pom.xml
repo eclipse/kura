@@ -10,7 +10,7 @@
 
     <groupId>org.eclipse.kura.tools.archetype</groupId>
     <artifactId>org.eclipse.kura.quickstart.archetype</artifactId>
-	<version>0.1.300-SNAPSHOT</version>
+	<version>5.0.0-SNAPSHOT</version>
     <name>Eclipse Kura App Quickstart Archetype</name>
 
     <description>This is the Maven-Archetype for creating an Eclipse Kura app.</description>

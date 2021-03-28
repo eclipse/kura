@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Native libraries for 'org.eclipse.kura.linux.usb' on ARM 6 HF
 Bundle-SymbolicName: org.eclipse.kura.linux.usb.armv6hf
-Bundle-Version: 1.0.600.qualifier
-Fragment-Host: org.eclipse.kura.linux.usb;bundle-version="[1.0.600,2.0.0)"
+Bundle-Version: 5.0.0.qualifier
+Fragment-Host: org.eclipse.kura.linux.usb;bundle-version="[5.0.0,6.0.0)"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-NativeCode: lib/linux/libEurotechLinuxUdev.so; osname=Linux; processor=ARM

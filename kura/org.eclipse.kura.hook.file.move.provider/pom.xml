@@ -22,7 +22,7 @@
 	</parent>
 
 	<artifactId>org.eclipse.kura.hook.file.move.provider</artifactId>
-	<version>1.0.400-SNAPSHOT</version>
+	<version>5.0.0-SNAPSHOT</version>
 	<packaging>eclipse-plugin</packaging>
 
 	<properties>

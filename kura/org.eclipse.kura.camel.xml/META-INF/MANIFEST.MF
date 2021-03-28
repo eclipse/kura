@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Plain XML router component
 Bundle-SymbolicName: org.eclipse.kura.camel.xml
-Bundle-Version: 1.1.200.qualifier
+Bundle-Version: 5.0.0.qualifier
 Bundle-Vendor: Eclipse Kura
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Import-Package: org.apache.camel;version="[2.17.0,3.0.0)",

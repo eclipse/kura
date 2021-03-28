@@ -15,5 +15,5 @@ Import-Package: org.apache.logging.log4j;version="2.8.2",
  org.mockito.invocation;version="1.10.19",
  org.mockito.stubbing;version="1.10.19",
  org.slf4j;version="1.6.4"
-Fragment-Host: org.eclipse.kura.stress;bundle-version="1.0.400"
+Fragment-Host: org.eclipse.kura.stress;bundle-version="5.0.0"
 

@@ -14,4 +14,4 @@ Import-Package: org.junit;version="4.12.0",
  org.mockito;version="1.10.19",
  org.mockito.invocation;version="1.10.19",
  org.mockito.stubbing;version="1.10.19"
-Fragment-Host: org.eclipse.kura.core.certificates;bundle-version="1.0.600"
+Fragment-Host: org.eclipse.kura.core.certificates;bundle-version="5.0.0"
