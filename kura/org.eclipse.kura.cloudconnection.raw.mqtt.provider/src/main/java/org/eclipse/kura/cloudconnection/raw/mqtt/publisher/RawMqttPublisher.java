@@ -64,7 +64,7 @@ public class RawMqttPublisher extends AbstractStackComponent<PublishOptions>
             throw new KuraException(KuraErrorCode.NOT_FOUND, null, null, "cloud endpoint not bound");
         }
 
-        return currentEndpoint.get().publish(publishOptions.get(), message.getPayload());
+        return currentEndpoint.get().publish(publishOptions.get(), message);
     }
 
     @Override

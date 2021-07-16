@@ -21,6 +21,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.kura.KuraConnectException;
 import org.eclipse.kura.KuraDisconnectException;
@@ -61,7 +63,10 @@ public class RawMqttCloudEndpoint
     private final Set<CloudDeliveryListener> cloudDeliveryListeners = new CopyOnWriteArraySet<>();
     private final Set<CloudConnectionListener> cloudConnectionListeners = new CopyOnWriteArraySet<>();
     private final Map<SubscribeOptions, Set<CloudSubscriberListener>> subscribers = new ConcurrentHashMap<>();
-
+    
+    private static final String TOPIC_PATTERN_STRING = "\\$([^\\s/]+)";
+    private static final Pattern TOPIC_PATTERN = Pattern.compile(TOPIC_PATTERN_STRING);
+    
     public void setDataService(final DataService dataService) {
         this.dataService = dataService;
     }
@@ -136,20 +141,22 @@ public class RawMqttCloudEndpoint
     @Override
     public String publish(final KuraMessage message) throws KuraException {
 
-        return publish(new PublishOptions(message.getProperties()), message.getPayload());
+        return publish(new PublishOptions(message.getProperties()), message);
     }
 
-    public String publish(final PublishOptions options, final KuraPayload kuraPayload) throws KuraException {
+    public String publish(final PublishOptions options, final KuraMessage message) throws KuraException {
 
-        final byte[] body = kuraPayload.getBody();
+        final byte[] body = message.getPayload().getBody();
 
         if (body == null) {
             throw new KuraException(KuraErrorCode.INVALID_PARAMETER, null, null, "missing message body");
         }
 
         final int qos = options.getQos().getValue();
-
-        final int id = this.dataService.publish(options.getTopic(), body, qos, options.getRetain(),
+        
+        final String fullTopic = fillTopicPlaceholders(options.getTopic(), message);
+        
+        final int id = this.dataService.publish(fullTopic, body, qos, options.getRetain(),
                 options.getPriority());
 
         if (qos == 0) {
@@ -157,6 +164,25 @@ public class RawMqttCloudEndpoint
         } else {
             return Integer.toString(id);
         }
+    }
+    
+    private String fillTopicPlaceholders(String semanticTopic, KuraMessage message) {
+        Matcher matcher = TOPIC_PATTERN.matcher(semanticTopic);
+        StringBuffer buffer = new StringBuffer();
+
+        while (matcher.find()) {
+            Map<String, Object> properties = message.getProperties();
+            if (properties.containsKey(matcher.group(1))) {
+                String replacement = matcher.group(0);
+
+                Object value = properties.get(matcher.group(1));
+                if (replacement != null) {
+                    matcher.appendReplacement(buffer, value.toString());
+                }
+            }
+        }
+        matcher.appendTail(buffer);
+        return buffer.toString();
     }
 
     @Override

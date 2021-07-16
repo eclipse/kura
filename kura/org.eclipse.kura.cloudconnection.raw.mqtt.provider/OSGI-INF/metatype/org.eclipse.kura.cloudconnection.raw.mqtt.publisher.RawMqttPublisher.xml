@@ -24,7 +24,7 @@
         	cardinality="0"
         	required="true"
         	default=""
-        	description='The MQTT topic to publish messages on.'>
+        	description='The MQTT topic to publish messages on. Wildcards can be defined in the topic by specifing a $value in the field. The publisher will try to match "value" with a corresponding property in the received KuraMessage. If possible, the $value placeholder will be substituted with the real value specified in the KuraMessage received from the user application.'>
         </AD>
                     
         <AD id="qos"
