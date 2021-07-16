@@ -456,9 +456,9 @@
       <dropinLocation
           rootFolder="${git.clone.location}/target-platform/p2-repo-common/target/repository"/>
       <dropinLocation
-          rootFolder="${git.clone.location}/target-platform/p2-repo-equinox_3.8.1/target/repository"/>
-      <dropinLocation
           rootFolder="${git.clone.location}/target-platform/p2-repo-equinox_3.12.50/target/repository"/>
+      <dropinLocation
+          rootFolder="${git.clone.location}/target-platform/p2-repo-equinox_3.16.0/target/repository"/>
       <dropinLocation
           rootFolder="${git.clone.location}/target-platform/p2-repo-test-deps/target/repository"/>
       <dropinLocation
