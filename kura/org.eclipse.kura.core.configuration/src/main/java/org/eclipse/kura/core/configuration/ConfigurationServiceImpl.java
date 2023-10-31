@@ -259,6 +259,7 @@ public class ConfigurationServiceImpl implements ConfigurationService, OCDServic
 
         final String kuraPid = makeString(reference.getProperty(ConfigurationService.KURA_SERVICE_PID));
 
+        deleteConfigurationFromConfigAdminInternal(kuraPid);
         unregisterComponentConfiguration(kuraPid);
     }
 
@@ -285,8 +286,8 @@ public class ConfigurationServiceImpl implements ConfigurationService, OCDServic
 
         final String kuraPid = makeString(reference.getProperty(ConfigurationService.KURA_SERVICE_PID));
 
+        deleteConfigurationFromConfigAdminInternal(kuraPid);
         unregisterComponentConfiguration(kuraPid);
-
     }
 
     protected void deactivate(ComponentContext componentContext) {
@@ -422,7 +423,7 @@ public class ConfigurationServiceImpl implements ConfigurationService, OCDServic
             boolean takeSnapshot) throws KuraException {
         if (pid == null) {
             throw new KuraException(KuraErrorCode.INVALID_PARAMETER, "pid cannot be null");
-        } else if (this.servicePidByPid.containsKey(pid)) {
+        } else if (this.servicePidByPid.containsKey(pid) || this.allActivatedPids.contains(pid)) {
             throw new KuraException(KuraErrorCode.INVALID_PARAMETER, "pid " + pid + " already exists");
         }
 
@@ -853,6 +854,27 @@ public class ConfigurationServiceImpl implements ConfigurationService, OCDServic
 
         if (!causes.isEmpty()) {
             throw new KuraPartialSuccessException("updateConfigurations", causes);
+        }
+    }
+
+    private synchronized void deleteConfigurationFromConfigAdminInternal(String kuraServicePid) {
+        try {
+            final Configuration[] configurations = this.configurationAdmin.listConfigurations(null);
+
+            final Optional<Configuration> configuration = Arrays.stream(configurations).filter(c -> {
+                final String pid = (String) c.getProperties().get(KURA_SERVICE_PID);
+                return pid.equals(kuraServicePid);
+            }).findAny();
+
+            if (!configuration.isPresent()) {
+                logger.warn("The component with kura.service.pid '{}' does not exist", kuraServicePid);
+            } else {
+                logger.info("Deleting factory configuration for component with kura.service.pid '{}'",
+                        kuraServicePid);
+                configuration.get().delete();
+            }
+        } catch (Exception e) {
+            logger.error("Error deleting configuration for component with kura.service.pid '{}'", kuraServicePid, e);
         }
     }
 
