@@ -12,4 +12,4 @@ The format accepted by the service is: `<imageName>:<imageTag>@<imageDigest>` wh
 
 Each image should be separated by a newline. The service will report a successful signature validation for each image inside its configuration, returning the provided image digest as a result.
 
-![](./images/dummy_signature_service.png)
+![](./images/dummy-signature-service/dummy_signature_service.png)
