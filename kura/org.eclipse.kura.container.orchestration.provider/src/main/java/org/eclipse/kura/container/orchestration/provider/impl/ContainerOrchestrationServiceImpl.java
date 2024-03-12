@@ -16,6 +16,7 @@ import static java.util.Objects.isNull;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -36,6 +37,7 @@ import org.eclipse.kura.container.orchestration.ImageConfiguration;
 import org.eclipse.kura.container.orchestration.ImageInstanceDescriptor;
 import org.eclipse.kura.container.orchestration.ImageInstanceDescriptor.ImageInstanceDescriptorBuilder;
 import org.eclipse.kura.container.orchestration.PasswordRegistryCredentials;
+import org.eclipse.kura.container.orchestration.PortInternetProtocol;
 import org.eclipse.kura.container.orchestration.RegistryCredentials;
 import org.eclipse.kura.container.orchestration.listener.ContainerOrchestrationServiceListener;
 import org.eclipse.kura.crypto.CryptoService;
@@ -168,8 +170,7 @@ public class ContainerOrchestrationServiceImpl implements ConfigurableComponent,
         containers.forEach(container -> result.add(ContainerInstanceDescriptor.builder()
                 .setContainerName(getContainerName(container)).setContainerImage(getContainerTag(container))
                 .setContainerImageTag(getContainerVersion(container)).setContainerID(container.getId())
-                .setInternalPorts(parseInternalPortsFromDockerPs(container.getPorts()))
-                .setExternalPorts(parseExternalPortsFromDockerPs(container.getPorts()))
+                .setContainerPorts(parseContainerPortsList(container.getPorts()))
                 .setContainerState(convertDockerStateToFrameworkState(container.getState()))
                 .setFrameworkManaged(isFrameworkManaged(container)).build()));
 
@@ -204,34 +205,41 @@ public class ContainerOrchestrationServiceImpl implements ConfigurableComponent,
         }
     }
 
-    private List<Integer> parseExternalPortsFromDockerPs(ContainerPort[] ports) {
-        List<Integer> externalPorts = new ArrayList<>();
+    private List<org.eclipse.kura.container.orchestration.ContainerPort> parseContainerPortsList(
+            ContainerPort[] ports) {
 
-        ContainerPort[] tempPorts = ports;
-        for (ContainerPort tempPort : tempPorts) {
-            if (tempPort.getIp() != null) {
-                String ipFormatTest = tempPort.getIp();
-                if (ipFormatTest != null && (ipFormatTest.equals("::") || ipFormatTest.equals("0.0.0.0"))) {
-                    externalPorts.add(tempPort.getPublicPort());
-                }
+        List<org.eclipse.kura.container.orchestration.ContainerPort> kuraContainerPorts = new ArrayList<>();
+
+        Arrays.asList(ports).stream().forEach(containerPort -> {
+            String ipTest = containerPort.getIp();
+            if (ipTest != null && (ipTest.equals("::") || ipTest.equals("0.0.0.0"))) {
+                kuraContainerPorts
+                        .add(new org.eclipse.kura.container.orchestration.ContainerPort(containerPort.getPrivatePort(),
+                                containerPort.getPublicPort(), parsePortInternetProtocol(containerPort.getType())));
             }
-        }
-        return externalPorts;
+        });
+
+        return kuraContainerPorts;
     }
 
-    private List<Integer> parseInternalPortsFromDockerPs(ContainerPort[] ports) {
-        List<Integer> internalPorts = new ArrayList<>();
+    private PortInternetProtocol parsePortInternetProtocol(String dockerPortProtocol) {
 
-        ContainerPort[] tempPorts = ports;
-        for (ContainerPort tempPort : tempPorts) {
-            if (tempPort.getIp() != null) {
-                String ipFormatTest = tempPort.getIp();
-                if (ipFormatTest != null && (ipFormatTest.equals("::") || ipFormatTest.equals("0.0.0.0"))) {
-                    internalPorts.add(tempPort.getPrivatePort());
-                }
-            }
+        switch (dockerPortProtocol) {
+
+        case "tcp":
+            return PortInternetProtocol.TCP;
+
+        case "udp":
+            return PortInternetProtocol.UDP;
+
+        case "sctp":
+            return PortInternetProtocol.SCTP;
+
+        default:
+            throw new IllegalStateException();
+
         }
-        return internalPorts;
+
     }
 
     private ContainerState convertDockerStateToFrameworkState(String dockerState) {
@@ -604,7 +612,7 @@ public class ContainerOrchestrationServiceImpl implements ConfigurableComponent,
             HostConfig configuration) {
 
         Optional<String> runtime = containerDescription.getRuntime();
-        runtime.ifPresent(runtimeOption -> configuration.withRuntime(runtimeOption));
+        runtime.ifPresent(configuration::withRuntime);
 
         return configuration;
     }
@@ -612,10 +620,7 @@ public class ContainerOrchestrationServiceImpl implements ConfigurableComponent,
     private HostConfig containerPortManagementHandler(ContainerConfiguration containerDescription,
             HostConfig commandBuilder) {
 
-        if (containerDescription.getContainerPortsInternal() != null
-                && containerDescription.getContainerPortsExternal() != null
-                && containerDescription.getContainerPortsExternal().size() == containerDescription
-                        .getContainerPortsInternal().size()) {
+        if (containerDescription.getContainerPorts() != null && !containerDescription.getContainerPorts().isEmpty()) {
             List<ExposedPort> exposedPortsList = new LinkedList<>();
             Ports portbindings = new Ports();
 
@@ -857,7 +862,7 @@ public class ContainerOrchestrationServiceImpl implements ConfigurableComponent,
             } catch (InterruptedException e) {
                 throw e;
             } catch (Exception e) {
-                logger.error("Cannot pull container. Caused by {}", e);
+                logger.error("Cannot pull container. Caused by ", e);
                 throw new KuraException(KuraErrorCode.IO_ERROR, "Unable to pull container");
             }
         }
