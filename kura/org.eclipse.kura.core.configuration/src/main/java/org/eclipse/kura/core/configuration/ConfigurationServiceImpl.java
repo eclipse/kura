@@ -1296,7 +1296,6 @@ public class ConfigurationServiceImpl implements ConfigurationService, OCDServic
                                                                 logger.error(
                                                                         "Type: {} for property named: {} does not match the AD type: {} for returned Configuration of SelfConfiguringComponent with pid: {}",
                                                                         new Object[] { propType, adId, adType, pid });
-                                                                return null;
                                                             }
                                                         } catch (IllegalArgumentException e) {
                                                             logger.error(
