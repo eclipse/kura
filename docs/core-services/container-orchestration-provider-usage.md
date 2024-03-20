@@ -84,6 +84,8 @@ To begin configuring the container, look under **Services** and select the item 
 
 - **Restart Container On Failure** - A boolean that tells the container engine to automatically restart the container when it has failed or shut down.
 
+- **Container Image Enforcement Digest** - A string representing the image digest allowed to be run from this container instances. It is used in the [Container Enforcement](#container-enforcement) service provided by the Container Orchestration Service.
+
 After specifying container parameters, ensure to set **Enabled** to **true** and press **Apply**. The container engine will then pull the respective image, spin up and start the container. If the gateway or the framework is power cycled, and the container and Container Orchestration Service are set to **enabled**, the framework will automatically start the container again upon startup.
 
 ![Container Orchestration Provider Container Configuration](./images/container-orchestration-provider-container-configuration.png)
@@ -137,3 +139,23 @@ After the starting phase just described, Kura will continuously monitor the acti
 
 ![Container Orchestration Provider Enfrocement Multiple Digests](./images/container-orchestration-provider-enforcement-multiple-digests.png)
 
+
+## Container Instance Enforcement
+
+In the [Container Instance configuration](#configuring-the-container) is included an option that allows to add a specific digest to the enforcement allowlist: this option was designed to allow the authorization of a specific image, but only when a Container Instance run by Kura is using it.
+
+Everytime the enforcement feature performs a check on its startup or when a new container is started, it will consider as authorized all the digests included in the Container Orchestration Allowlist and those provided by the enabled Container Instances in Kura through the *Container Image Enforcement Digest* option.
+
+
+So the authorization schemas presented in the [previous section](#container-enforcement) are updated like:
+![Enforcement Flow With Instances](./images/diagramAllowlistWithInstances.png)
+
+As you can see, the *ContainerInstance2* digest is not included in the final allowlist, because it is disabled: so, if a container with digest *DIGEST Y* is started under the image condition, it will then be stopped and deleted.
+
+Finally, everytime a ContainerInstance is disabled, deleted or updated, the enforcement feature will perform a check on all the running containers. This is done because the enforcement allowlist may no longer include the previously provided digest or the latter may have been replaced with a new one: there may therefore be containers that were previously allowed, But now they are no longer and must be stopped and deleted.
+
+!!! warning
+
+    The digests provided through Container Instances allow running also container started by the CLI (only if respecting the digest match just described). Keep in mind that if the ContainerInstance is disabled (or its digest option changed) the enforcement feature will stop and delete also the *cli-based* containers that are no longer matching the provided digest.
+
+    Be careful, then, to rely only on the digests set in the ContainerInstances options. If you think you need to run containers from the CLI, it is preferable to use the allowlist of the Container Orchestration Service.
