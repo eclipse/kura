@@ -59,6 +59,7 @@ nav:
         - Container Orchestration Provider APIs: core-services/container-orchestration-provider-apis.md
         - Container Orchestration Provider Usage: core-services/container-orchestration-provider-usage.md
         - Container Orchestration Provider Authenticated Registries: core-services/container-orchestration-provider-authenticated-registries.md
+        - Container Image Authenticity and Allowlist Enforcement: core-services/container-orchestration-image-auth.md
       - Nvidia™ Triton Server Inference Engine: core-services/nvidia-triton-server-inference-engine.md
       - Device Configuration Changes: core-services/device-configuration-changes.md
       - Network Status Service V1 REST APIs and MQTT Request Handler: core-services/network-status-rest-v1.md
