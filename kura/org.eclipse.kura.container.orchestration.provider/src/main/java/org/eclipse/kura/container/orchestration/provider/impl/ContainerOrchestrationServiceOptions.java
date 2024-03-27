@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2022, 2024 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -24,9 +24,13 @@ public class ContainerOrchestrationServiceOptions {
     private static final Property<Boolean> IS_ENABLED = new Property<>("enabled", false);
     private static final Property<String> DOCKER_HOST_URL = new Property<>("container.engine.host",
             "unix:///var/run/docker.sock");
+    private static final Property<Boolean> ENFORCEMENT_ENABLED = new Property<>("enforcement.enabled", false);
+    private static final Property<String> ENFORCEMENT_ALLOWLIST = new Property<>("enforcement.allowlist", "");
 
     private final boolean enabled;
     private final String hostUrl;
+    private final boolean enforcementEnabled;
+    private final String enforcementAllowlist;
 
     public ContainerOrchestrationServiceOptions(final Map<String, Object> properties) {
 
@@ -36,6 +40,8 @@ public class ContainerOrchestrationServiceOptions {
 
         this.enabled = IS_ENABLED.get(properties);
         this.hostUrl = DOCKER_HOST_URL.get(properties);
+        this.enforcementEnabled = ENFORCEMENT_ENABLED.get(properties);
+        this.enforcementAllowlist = ENFORCEMENT_ALLOWLIST.get(properties);
 
     }
 
@@ -47,9 +53,17 @@ public class ContainerOrchestrationServiceOptions {
         return this.hostUrl;
     }
 
+    public boolean isEnforcementEnabled() {
+        return this.enforcementEnabled;
+    }
+
+    public String getEnforcementAllowlist() {
+        return this.enforcementAllowlist;
+    }
+
     @Override
     public int hashCode() {
-        return Objects.hash(this.enabled, this.hostUrl);
+        return Objects.hash(enforcementAllowlist, enforcementEnabled, enabled, hostUrl);
     }
 
     @Override
@@ -57,10 +71,16 @@ public class ContainerOrchestrationServiceOptions {
         if (this == obj) {
             return true;
         }
-        if (obj == null || getClass() != obj.getClass()) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
             return false;
         }
         ContainerOrchestrationServiceOptions other = (ContainerOrchestrationServiceOptions) obj;
-        return isEnabled() == other.isEnabled() && Objects.equals(getHostUrl(), other.getHostUrl());
+        return Objects.equals(enforcementAllowlist, other.enforcementAllowlist)
+                && enforcementEnabled == other.enforcementEnabled && enabled == other.enabled
+                && Objects.equals(hostUrl, other.hostUrl);
     }
+
 }

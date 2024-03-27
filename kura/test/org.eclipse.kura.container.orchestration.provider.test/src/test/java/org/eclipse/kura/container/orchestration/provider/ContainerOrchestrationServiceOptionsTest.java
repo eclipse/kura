@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2022, 2024 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -29,9 +29,13 @@ public class ContainerOrchestrationServiceOptionsTest {
 
     private static final String DOCKER_HOST_URL = "container.engine.host";
     private static final String IS_ENABLED = "enabled";
+    private static final String ALLOWLIST_ENABLED = "allowlist.enabled";
+    private static final String ALLOWLIST_CONTENT = "allowlist.content";
 
     private static final String DEFAULT_DOCKER_HOST_URL = "unix:///var/run/docker.sock";
     private static final boolean DEFAULT_IS_ENABLED = false;
+    private static final String DEFAULT_ALLOWLIST_CONTENT = "";
+    private static final boolean DEFAULT_ALLOWLIST_ENABLED = false;
 
     private static final String REPOSITORY_ENABLED = "repository.enabled";
     private static final String REPOSITORY_URL = "repository.hostname";
@@ -45,6 +49,9 @@ public class ContainerOrchestrationServiceOptionsTest {
 
     private String host_url = "";
     private boolean is_enabled = false;
+    private String allowlist_content = "";
+    private boolean enforcement_enabled = false;
+
     private int hash;
 
     private Map<String, Object> properties = new HashMap<>();
@@ -109,6 +116,8 @@ public class ContainerOrchestrationServiceOptionsTest {
 
         whenHostStringSet();
         whenIsEnabled();
+        whenAllowlistContentSet();
+        whenIsEnforcementEnabled();
 
         whenHashIsCalculated();
 
@@ -156,6 +165,8 @@ public class ContainerOrchestrationServiceOptionsTest {
         this.properties = new HashMap<>();
         this.properties.put(DOCKER_HOST_URL, DEFAULT_DOCKER_HOST_URL);
         this.properties.put(IS_ENABLED, DEFAULT_IS_ENABLED);
+        this.properties.put(ALLOWLIST_ENABLED, DEFAULT_ALLOWLIST_ENABLED);
+        this.properties.put(ALLOWLIST_CONTENT, DEFAULT_ALLOWLIST_CONTENT);
         this.properties.put(REPOSITORY_ENABLED, DEFAULT_REPOSITORY_ENABLED);
         this.properties.put(REPOSITORY_URL, DEFAULT_REPOSITORY_URL);
         this.properties.put(REPOSITORY_USERNAME, DEFAULT_REPOSITORY_USERNAME);
@@ -166,6 +177,8 @@ public class ContainerOrchestrationServiceOptionsTest {
         this.newProperties = new HashMap<>();
         this.newProperties.put(DOCKER_HOST_URL, "http://docker.local");
         this.newProperties.put(IS_ENABLED, true);
+        this.properties.put(ALLOWLIST_ENABLED, DEFAULT_ALLOWLIST_ENABLED);
+        this.properties.put(ALLOWLIST_CONTENT, DEFAULT_ALLOWLIST_CONTENT);
         this.properties.put(REPOSITORY_ENABLED, DEFAULT_REPOSITORY_ENABLED);
         this.properties.put(REPOSITORY_URL, DEFAULT_REPOSITORY_URL);
         this.properties.put(REPOSITORY_USERNAME, DEFAULT_REPOSITORY_USERNAME);
@@ -200,8 +213,16 @@ public class ContainerOrchestrationServiceOptionsTest {
         this.host_url = this.dso.getHostUrl();
     }
 
+    private void whenAllowlistContentSet() {
+        this.allowlist_content = this.dso.getEnforcementAllowlist();
+    }
+
+    private void whenIsEnforcementEnabled() {
+        this.enforcement_enabled = this.dso.isEnforcementEnabled();
+    }
+
     private void whenHashIsCalculated() {
-        this.hash = Objects.hash(this.is_enabled, this.host_url);
+        this.hash = Objects.hash(this.allowlist_content, this.enforcement_enabled, this.is_enabled, this.host_url);
     }
 
     /**

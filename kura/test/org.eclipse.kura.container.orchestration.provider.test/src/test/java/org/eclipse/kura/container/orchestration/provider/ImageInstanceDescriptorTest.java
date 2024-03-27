@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2022, 2024 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -15,14 +15,7 @@ package org.eclipse.kura.container.orchestration.provider;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import org.apache.commons.lang.ArrayUtils;
-import org.eclipse.kura.container.orchestration.ContainerInstanceDescriptor;
 import org.eclipse.kura.container.orchestration.ImageInstanceDescriptor;
 import org.junit.Test;
 
@@ -34,13 +27,10 @@ public class ImageInstanceDescriptorTest {
     private static final String IMAGE_AUTHOR = "Nginx";
     private static final String IMAGE_ID = "f45f645f457uyrthjfghje4r6t";
     private static final long IMAGE_SIZE = 123123;
-    
-    
-    
+
     private ImageInstanceDescriptor firstImageConfig;
     private ImageInstanceDescriptor seccondImageConfig;
-    
-    
+
     @Test
     public void testSupportOfBasicParameters() {
         givenContainerOne();
@@ -63,14 +53,17 @@ public class ImageInstanceDescriptorTest {
     // given
     private void givenContainerOne() {
 
-    	this.firstImageConfig = ImageInstanceDescriptor.builder().setImageName(IMAGE_NAME).setImageTag(IMAGE_TAG).setImageArch(IMAGE_ARCH).setImageAuthor(IMAGE_AUTHOR).setimageSize(IMAGE_SIZE).setImageId(IMAGE_ID).build();
+        this.firstImageConfig = ImageInstanceDescriptor.builder().setImageName(IMAGE_NAME).setImageTag(IMAGE_TAG)
+                .setImageArch(IMAGE_ARCH).setImageAuthor(IMAGE_AUTHOR).setimageSize(IMAGE_SIZE).setImageId(IMAGE_ID)
+                .build();
     }
 
     private void givenContainerTwoDiffrent() {
 
-        this.seccondImageConfig = ImageInstanceDescriptor.builder().setImageName("NOT_"+IMAGE_NAME).setImageTag("NOT_"+IMAGE_TAG).setImageArch("NOT_"+IMAGE_ARCH).setImageAuthor(IMAGE_AUTHOR).setimageSize(IMAGE_SIZE).setImageId("3rhf8943hf78934hf734t7r8fw38fy234897fh8").build();
+        this.seccondImageConfig = ImageInstanceDescriptor.builder().setImageName("NOT_" + IMAGE_NAME)
+                .setImageTag("NOT_" + IMAGE_TAG).setImageArch("NOT_" + IMAGE_ARCH).setImageAuthor(IMAGE_AUTHOR)
+                .setimageSize(IMAGE_SIZE).setImageId("3rhf8943hf78934hf734t7r8fw38fy234897fh8").build();
     }
-
 
     // then
     private void thenCompareContainerOneToExpectedOutput() {

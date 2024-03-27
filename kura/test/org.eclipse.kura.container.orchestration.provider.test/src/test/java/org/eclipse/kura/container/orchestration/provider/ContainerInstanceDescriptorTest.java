@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2022, 2024 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -33,8 +33,7 @@ public class ContainerInstanceDescriptorTest {
     private static final List<Integer> H2_DB_PORTS_INTERNAL = new ArrayList<>(Arrays.asList(1521, 81));
     private ContainerInstanceDescriptor firstContainerConfig;
     private ContainerInstanceDescriptor seccondContainerConfig;
-    
-    
+
     @Test
     public void testSupportOfBasicParameters() {
         givenContainerOne();
@@ -66,10 +65,8 @@ public class ContainerInstanceDescriptorTest {
 
         this.seccondContainerConfig = ContainerInstanceDescriptor.builder().setContainerImageTag(H2_DB_NAME)
                 .setContainerName(H2_DB_NAME).setContainerImage(H2_DB_IMAGE).setContainerImageTag("diffrent")
-                .setExternalPorts(H2_DB_PORTS_EXTERNAL).setInternalPorts(H2_DB_PORTS_INTERNAL)
-                .build();
+                .setExternalPorts(H2_DB_PORTS_EXTERNAL).setInternalPorts(H2_DB_PORTS_INTERNAL).build();
     }
-
 
     // then
     private void thenCompareContainerOneToExpectedOutput() {

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright (c) 2022 Eurotech and/or its affiliates and others
+    Copyright (c) 2022, 2024 Eurotech and/or its affiliates and others
   
     This program and the accompanying materials are made
     available under the terms of the Eclipse Public License 2.0
@@ -25,6 +25,19 @@
         <AD id="container.engine.host" name="Container Engine Host URL"
             description="Host URL: tcp://localhost:2376 or unix:///var/run/docker.sock" type="String"
             cardinality="0" required="true" default="unix:///var/run/docker.sock" />
+            
+        <AD id="enforcement.enabled" name="Allowlist Enforcement Enabled" type="Boolean" cardinality="0" required="true" default="false"
+            description="Enable/Disable the Allowlist enforcement. If enabled, only containers images whose digest can be found in the allowlist will be allowed to be run/loaded/created.">
+        </AD>
+        
+        <AD
+            id="enforcement.allowlist"
+            name="Container Image Allowlist "
+            description="List of values containing the image digests. Each entry must be inserted in a new line of the text box|TextArea"
+            type="String"
+            cardinality="1"
+            required="false"
+            default="" />
         
     </OCD>
 
