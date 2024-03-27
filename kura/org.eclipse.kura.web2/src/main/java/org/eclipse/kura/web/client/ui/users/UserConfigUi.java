@@ -183,15 +183,19 @@ public class UserConfigUi extends Composite {
 
                 @Override
                 public void onConfigurationChanged(HasConfiguration hasConfiguration) {
-                    // nothing to do
+                    addAdditionalConfiguration(hasConfiguration);
                 }
 
                 @Override
                 public void onDirtyStateChanged(HasConfiguration hasConfiguration) {
+                    addAdditionalConfiguration(hasConfiguration);
+                }
+
+                private void addAdditionalConfiguration(HasConfiguration hasConfiguration) {
                     if (!hasConfiguration.isDirty()) {
                         return;
                     }
-
+                    
                     if (hasConfiguration.isValid()) {
                         final GwtConfigComponent updatedConfiguration = hasConfiguration.getConfiguration();
 
@@ -200,7 +204,7 @@ public class UserConfigUi extends Composite {
                         listener.onUserDataChanged(userData);
                     }
                 }
-
+                
             });
 
             final PanelHeader header = new PanelHeader();
