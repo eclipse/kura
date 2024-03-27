@@ -83,7 +83,9 @@ public class FloodingProtectionOptions {
     private static final String FP_ENABLED_DESCRIPTION_IPV4 = "Enable the flooding protection feature for IPv4.";
     private static final String FP_ENABLED_PROP_NAME_IPV6 = "flooding.protection.enabled.ipv6";
     private static final String FP_ENABLED_DESCRIPTION_IPV6 = "Enable the flooding protection feature for IPv6. "
-            + "If the device does not support IPv6, this property will be ignored.";
+            + "If the device does not support IPv6, this property will be ignored. "
+            + "In kernel versions less than 6.x, after disabling the feature by setting this field to false, "
+            + "a reboot may be needed to completely disable the filtering.";
     private static final boolean FP_ENABLED_DEFAULT_IPV4 = false;
     private static final boolean FP_ENABLED_DEFAULT_IPV6 = false;
 
