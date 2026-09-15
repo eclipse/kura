@@ -1004,8 +1004,10 @@ public class ConfigurationServiceImpl implements ConfigurationService, OCDServic
                 throw new KuraException(KuraErrorCode.CONFIGURATION_ERROR, snapshot);
             }
 
-            final XmlComponentConfigurations xmlConfigs = unmarshal(new FileInputStream(fSnapshot),
-                    XmlComponentConfigurations.class);
+            final XmlComponentConfigurations xmlConfigs;
+            try (InputStream in = new FileInputStream(fSnapshot)) {
+                xmlConfigs = unmarshal(in, XmlComponentConfigurations.class);
+            }
 
             ComponentUtil.encryptConfigs(xmlConfigs.getConfigurations(), this.cryptoService);
 
@@ -1389,23 +1391,23 @@ public class ConfigurationServiceImpl implements ConfigurationService, OCDServic
                     fSnapshot != null ? fSnapshot.getAbsolutePath() : "null");
         }
 
-        InputStream decryptedStream = null;
-        try {
-            decryptedStream = this.cryptoService.aesDecryptingStream(new FileInputStream(fSnapshot));
+        try (InputStream fileStream = new FileInputStream(fSnapshot)) {
+            return unmarshalSnapshot(this.cryptoService.aesDecryptingStream(fileStream));
         } catch (FileNotFoundException e) {
             logger.error("Error loading file from disk", e);
             return null;
+        } catch (IOException e) {
+            throw new KuraIOException(e);
         }
+    }
 
-        XmlComponentConfigurations xmlConfigs = null;
-
+    private XmlComponentConfigurations unmarshalSnapshot(final InputStream decryptedStream) {
         try {
-            xmlConfigs = unmarshal(decryptedStream, XmlComponentConfigurations.class);
+            return unmarshal(decryptedStream, XmlComponentConfigurations.class);
         } catch (KuraException e) {
             logger.warn("Error parsing xml", e);
+            return null;
         }
-
-        return xmlConfigs;
     }
 
     private void updateConfigurationInternal(String pid, Map<String, Object> properties, boolean snapshotOnConfirmation)
